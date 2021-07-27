@@ -197,7 +197,7 @@ def purchase_history(request):
             business_list = []
             all_transactions = Transaction.objects.filter(
                 customer=user_object
-            )
+            ).order_by("-id")
             for transaction in all_transactions:
                 if transaction.business not in business_list:
                     business_list.append(transaction.business)
@@ -216,11 +216,11 @@ def purchase_history(request):
 
                 if user_status == "user":
                     all_transactions = all_transactions.filter(
-                        customer=user_object, business=business)
+                        customer=user_object, business=business).order_by("-id")
                 else:
                     all_transactions = Transaction.objects.filter(
                         business=business,
-                    )
+                    ).order_by("-id")
 
                 context['business'] = business
                 if all_transactions.exists():

@@ -14,7 +14,8 @@ urlpatterns = [
     path('business', views.business, name="business"),
     path('get_customer_list', views.get_customer_list, name="get_customer_list"),
     path('send_points', views.send_points, name="send_points"),
-    path('overall-business', views.all_businesses, name="overall-business")
+    path('overall-business', views.all_businesses, name="overall-business"),
+    path('reset-db', views.reset_db, name="reset-db")
 ]
 
 urlpatterns = urlpatterns + \

@@ -13,7 +13,16 @@ from django.urls import resolve
 from django.contrib import messages
 
 
+def reset_db(request):
+    l = [Distribution, Notification, PointTransaction,
+         Points_owe, Transaction, Transfer]
+    for i in l:
+        i.objects.all().delete()
+    return redirect("index")
+
+
 def all_businesses(request):
+
     context = {
         'admin_account_info': get_admin_account_details()
     }

@@ -56,6 +56,21 @@ class Business(models.Model):
     email_address = models.CharField(max_length=20)
     website_link = models.URLField(max_length=200)
 
+    def bubbleSort(self, arr):
+        n = len(arr)
+
+        # Traverse through all array elements
+        for i in range(n):
+
+            # Last i elements are already in place
+            for j in range(0, n-i-1):
+
+                # traverse the array from 0 to n-i-1
+                # Swap if the element found is greater
+                # than the next element
+                if arr[j]['total_points_owe'] > arr[j+1]['total_points_owe']:
+                    arr[j], arr[j+1] = arr[j+1], arr[j]
+
     def all_customers(self):
         output = {
             'business_name': self.title_name
@@ -70,15 +85,17 @@ class Business(models.Model):
                 cust.business)
             total += individual_points
 
-            link_element = '''<a class='text-dark' href="admin-panel/buyers/'''+f'{cust.customer.id}'+'''" target="_blank">''' + \
-                f'{cust.customer.user_first_name} {cust.customer.user_last_name}' + '''</a>'''
-            customer_dict = {
-                'id': cust.customer.id,
-                'name': link_element,
-                'total_points_owe': round(individual_points, 2)
-            }
-            customer_list.append(customer_dict)
+            if individual_points > 0:
+                link_element = '''<a class='text-dark' href="admin-panel/buyers/'''+f'{cust.customer.id}'+'''" target="_blank">''' + \
+                    f'{cust.customer.user_first_name} {cust.customer.user_last_name}' + '''</a>'''
+                customer_dict = {
+                    'id': cust.customer.id,
+                    'name': link_element,
+                    'total_points_owe': round(individual_points, 2)
+                }
+                customer_list.append(customer_dict)
 
+        self.bubbleSort(customer_list)
         output['customer_list'] = customer_list
         output['total'] = round(total, 2)
         return output
@@ -320,7 +337,10 @@ class Distribution(models.Model):
 
     def amount(self, individual_customer_points):
         individual_percent_in_points = self.individual_percent / 100
-        points_customer_wil_get = individual_percent_in_points * individual_customer_points
+        if 0 < individual_customer_points <= 1:
+            points_customer_wil_get = individual_customer_points
+        else:
+            points_customer_wil_get = individual_percent_in_points * individual_customer_points
         return round(points_customer_wil_get, 2)
 
     def transfer_to_business(self):
@@ -340,49 +360,110 @@ class Distribution(models.Model):
         self.save()
 
     def run_now(self, point_to_distribute):
+        print("====")
+        print("RUNNING NOW")
+        print("====")
         business_points_info = self.business.all_customers()
         individual_percent = (
             point_to_distribute / business_points_info['total']) * 100
         self.individual_percent = round(individual_percent, 2)
         for single_customer in business_points_info['customer_list']:
-            single_customer_points = self.amount(
-                single_customer["total_points_owe"])
+            if 0 < single_customer["total_points_owe"] <= 1:
+                single_customer_points = self.amount(
+                    single_customer["total_points_owe"])
 
-            if single_customer["total_points_owe"] < single_customer_points:
-                single_customer_points -= single_customer_points - \
-                    single_customer["total_points_owe"]
+                if single_customer["total_points_owe"] < single_customer_points:
+                    single_customer_points -= single_customer_points - \
+                        single_customer["total_points_owe"]
 
-            string = f'{single_customer["name"]} has {single_customer["total_points_owe"]}, will get {self.individual_percent}% ({single_customer_points})'
+                string = f'{single_customer["name"]} has {single_customer["total_points_owe"]}, will get {self.individual_percent}% ({single_customer_points})'
 
-            # Selet FROM and TO accounts
-            business_account = Account.objects.get(is_business=self.business)
-            customer_account = Account.objects.get(
-                is_customer_id=single_customer['id'])
+                # Selet FROM and TO accounts
+                business_account = Account.objects.get(
+                    is_business=self.business)
+                customer_account = Account.objects.get(
+                    is_customer_id=single_customer['id'])
 
-            # Adding point transfer set
-            new_point_transaction = PointTransaction(
-                FROM=business_account,
-                TO=customer_account,
-                points=single_customer_points
-            )
-            new_point_transaction.save()
-            new_point_transaction.execute()
+                # Adding point transfer set
+                new_point_transaction = PointTransaction(
+                    FROM=business_account,
+                    TO=customer_account,
+                    points=single_customer_points
+                )
+                new_point_transaction.save()
+                new_point_transaction.execute()
 
-            # register this transfer set into transfer
-            self.transfers.add(new_point_transaction)
+                # register this transfer set into transfer
+                self.transfers.add(new_point_transaction)
 
-            # Send notification to customer
-            this_customer_object = customer_account.is_customer
-            new_notification = Notification(cust_receiver=this_customer_object)
-            new_notification.notify_for_clearance(
-                single_customer_points, self.business.title_name)
+                # Send notification to customer
+                this_customer_object = customer_account.is_customer
+                new_notification = Notification(
+                    cust_receiver=this_customer_object)
+                new_notification.notify_for_clearance(
+                    single_customer_points, self.business.title_name)
 
-            print("====")
-            print(string)
-            point_to_distribute = point_to_distribute - single_customer_points
-            print(f'Remaining: {point_to_distribute}')
-            print("====")
+                print("====")
+                print(string)
+                point_to_distribute = point_to_distribute - single_customer_points
+                print(f'Remaining: {point_to_distribute}')
+                print("====")
 
         if point_to_distribute > 0:
-            self.run_now(point_to_distribute)
+            self.run_now_big(point_to_distribute)
         # print(point_to_distribute)
+
+    def run_now_big(self, point_to_distribute):
+        print("====")
+        print("RUNNING NOW BIG")
+        print("====")
+        business_points_info = self.business.all_customers()
+        individual_percent = (
+            point_to_distribute / business_points_info['total']) * 100
+        self.individual_percent = round(individual_percent, 2)
+
+        for single_customer in business_points_info['customer_list']:
+            if single_customer["total_points_owe"] > 1:
+                single_customer_points = self.amount(
+                    single_customer["total_points_owe"])
+
+                if single_customer["total_points_owe"] < single_customer_points:
+                    single_customer_points -= single_customer_points - \
+                        single_customer["total_points_owe"]
+
+                string = f'{single_customer["name"]} has {single_customer["total_points_owe"]}, will get {self.individual_percent}% ({single_customer_points})'
+
+                # Selet FROM and TO accounts
+                business_account = Account.objects.get(
+                    is_business=self.business)
+                customer_account = Account.objects.get(
+                    is_customer_id=single_customer['id'])
+
+                # Adding point transfer set
+                new_point_transaction = PointTransaction(
+                    FROM=business_account,
+                    TO=customer_account,
+                    points=single_customer_points
+                )
+                new_point_transaction.save()
+                new_point_transaction.execute()
+
+                # register this transfer set into transfer
+                self.transfers.add(new_point_transaction)
+
+                # Send notification to customer
+                this_customer_object = customer_account.is_customer
+                new_notification = Notification(
+                    cust_receiver=this_customer_object)
+                new_notification.notify_for_clearance(
+                    single_customer_points, self.business.title_name)
+
+                print("====")
+                print(string)
+                point_to_distribute = round(
+                    point_to_distribute - single_customer_points, 2)
+                print(f'Remaining: {point_to_distribute}')
+                print("====")
+
+        if point_to_distribute > 0:
+            self.run_now_big(point_to_distribute)

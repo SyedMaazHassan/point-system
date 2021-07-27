@@ -38,7 +38,7 @@
                         <div class="col-sm-4">
                             <div class="form-group">
                                 <label>Price</label>
-                                <input type="number" min="1" class="form-control" v-model="price" required>
+                                <input type="number" id="price-input" min="1" class="form-control"  @keyup="make_price_same()"  v-model="price" required>
                             </div>
                         </div>
 
@@ -79,6 +79,11 @@
                                 <small>Available points: <b>${ available_points }</b></small>
                                 <p class="my-0 mt-2"></p>
                             </div>
+                        </div>
+
+                        <div class="col-sm-4" v-if="customer_name">
+                            <label class="text-white">Max button</label>
+                            <button type="button" @click="automatic_max()" class="btn btn-primary btn-block">Max</button>
                         </div>
                     </div>
 
@@ -1393,6 +1398,8 @@
 
 <script>
 
+var window_open = false;
+
 var my_vue_app = new Vue({
     el: "#main-container",
     delimiters: ['${', '}'],
@@ -1410,7 +1417,6 @@ var my_vue_app = new Vue({
         my_error: false,
         success: false,
 
-        reward_points: 0,
         membership_level: null,
         
 
@@ -1449,6 +1455,28 @@ var my_vue_app = new Vue({
             }else{
                 this.customer_name = null;
             }
+        },
+
+        make_price_same: function () {
+            this.payment.via_money = this.price;
+        },
+
+        automatic_max: function () {
+            if (this.available_points > 0) {
+                let t5_percent = this.price * 0.25; //price = 100 -> t5_percent = 25
+                let temp_point;
+                if (this.available_points > t5_percent) { // 37 > 25:
+                    temp_point = t5_percent // 25
+                }else{
+                    temp_point = this.available_points // 24
+                }
+                this.payment.via_money = this.price - temp_point; // 100 - 24 = 76
+                this.payment.via_points = temp_point; // 24
+
+            }else{
+                this.payment.via_money = this.price;
+            }
+            this.check_calculation();
         },
 
         check_calculation: function () {
@@ -1533,6 +1561,7 @@ var my_vue_app = new Vue({
                         if (response['result']) {
                             this.reset();      
                             this.success = true;
+                            $("#price-input").focus();
 
                             setTimeout(() => {
                                 this.success = false;
@@ -1549,13 +1578,55 @@ var my_vue_app = new Vue({
                 this.my_error = true;
 
             }
+        },
+
+        doSave: function(e) {
+          if (!(e.keyCode === 83 && (e.ctrlKey || e.metaKey))) {
+            return;
+          }
+    
+          e.preventDefault();
+          if (window_open){
+              this.add_new_transaction()
+          }
+        //   console.log("saving from DOM!");
         }
 
     },
 
+    mounted() {
+        document.addEventListener("keydown", this.doSave);
+    },
+    
+    beforeDestroy() {
+        document.removeEventListener("keydown", this.doSave);
+    },
+
     created(){
 
-    
+
+
+        // $(window).bind('keydown', function(event) {
+        //     if (event.ctrlKey || event.metaKey) {
+        //         switch (String.fromCharCode(event.which).toLowerCase()) {
+        //         case 's':
+        //             event.preventDefault();
+        //             if (window_open) {
+        //                 this.add_new_transaction();                        
+        //             }
+        //             break;
+        //         case 'f':
+        //             event.preventDefault();
+        //             alert('ctrl-f');
+        //             break;
+        //         case 'g':
+        //             event.preventDefault();
+        //             alert('ctrl-g');
+        //             break;
+        //         }
+        //     }
+        // });
+
     }
 });
 
@@ -1568,11 +1639,13 @@ var my_vue_app = new Vue({
 <script>
 
     function openNav() {
+        window_open = true;
         document.getElementById("mySidenav").style.width = "600px";
         $("#mySidenav").css('box-shadow', '10px 10px 10px 15px #cccccc');
     }
 
     function closeNav() {
+        window_open = false;
         document.getElementById("mySidenav").style.width = "0";
         $("#mySidenav").css('box-shadow', 'none');    
     }
