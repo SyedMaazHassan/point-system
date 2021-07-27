@@ -1,0 +1,201 @@
+{% extends 'inc/base.html' %}
+{% load static %}
+{% block classpanel %} panel page-my-listing{% endblock classpanel %}
+{% block content %}
+<div id="wrapper-content" class="wrapper-content pt-0 pb-0">
+    <div class="page-wrapper d-flex flex-wrap flex-xl-nowrap">
+       
+        {% include 'admin_panel/inc/profile-side-panel.inc.html' %}
+
+        <div class="page-container">
+            <div class="container-fluid">
+                <div class="page-content-wrapper d-flex flex-column">
+                    <h2 class="mb-5 text-secondary">Owners & requests</h2>
+
+                    <!-- <h1 class="font-size-h4 mb-4 font-weight-normal">My Businesses</h1> -->
+                    <div class="page-content">
+                        <div class="tabs">
+                            <ul class="nav nav-pills tab-style-01 font-size-lg" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link {% if all_pending_count == 0 %}active{% endif %}" id="all-tab" data-toggle="tab" href="#approved"
+                                       role="tab"
+                                       aria-controls="all" aria-selected="{% if all_pending_count == 0 %}true{% else %}false{% endif %}">Approved owners ({{all_approved_count}})</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="active-tab" data-toggle="tab" href="#rejected"
+                                       role="tab"
+                                       aria-controls="active" aria-selected="false">Rejected owners ({{all_rejected_count}})</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {% if all_pending_count > 0 %}active{% endif %}" id="pending-tab" data-toggle="tab" href="#pending"
+                                       role="tab" aria-controls="pending" aria-selected="{% if all_pending_count > 0 %}true{% else %}false{% endif %}"> New owner requests 
+                                       
+                                       {% if all_pending_count > 0 %}
+                                           <span class="badge badge-danger bg-danger text-white r-25" title="New business requests">{{all_pending_count}}</span>
+                                       {% else %}
+                                           ({{all_pending_count}})
+                                       {% endif %}
+                                    </a>
+                                </li>
+                                <!-- <li class="nav-item">
+                                    <a class="nav-link" id="expires-tab" data-toggle="tab" href="#expires"
+                                       role="tab" aria-controls="expires" aria-selected="false"> Expires
+                                        Listings
+                                        (2) </a>
+                                </li> -->
+                            </ul>
+                        </div>
+                        <div class="tab-content">
+                            <div class="tab-pane fade {% if all_pending_count == 0 %}show active{% endif %}" id="approved" role="tabpanel"
+                                 aria-labelledby="all-tab">
+                                <div class="store-listing-style-04">
+                                    {% if not all_approved %}
+                                        <div class="alert alert-primary text-center my-5" role="alert">
+                                            No approved owner exists in records
+                                        </div>
+                                    {% endif %}
+
+                                    {% for owner in all_approved %}
+
+                                        {% include 'admin_panel/inc/owner-list.inc.html' %}
+
+                                    {% endfor %}
+
+
+                                </div>
+                                <!-- <ul class="pagination pagination-style-02">
+                                    <li class="page-item"><a href="#" class="page-link bg-gray"><i
+                                            class="fal fa-chevron-left"></i></a>
+                                    </li>
+                                    <li class="page-item"><a href="#" class="page-link current bg-gray">1</a>
+                                    </li>
+                                    <li class="page-item"><a href="#" class="page-link bg-gray">2</a></li>
+                                    <li class="page-item"><a href="#" class="page-link bg-gray">3</a></li>
+                                    <li class="page-item"><a href="#" class="page-link bg-gray">...</a></li>
+                                    <li class="page-item"><a href="#" class="page-link bg-gray">5</a></li>
+                                    <li class="page-item"><a href="#" class="page-link bg-gray"><i
+                                            class="fal fa-chevron-right"></i></a>
+                                    </li>
+                                </ul> -->
+                            </div>
+                            <div class="tab-pane fade" id="rejected" role="tabpanel" aria-labelledby="active-tab">
+                                <div class="store-listing-style-04">
+                                    {% if not all_rejected %}
+                                        <div class="alert alert-primary text-center my-5" role="alert">
+                                            No rejected owner exists in records
+                                        </div>
+                                    {% endif %}
+
+                                    {% for owner in all_rejected %}
+
+                                        {% include 'admin_panel/inc/owner-list.inc.html' %}
+
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+                            <div class="tab-pane fade {% if all_pending_count > 0 %}show active{% endif %}" id="pending" role="tabpanel"
+                                 aria-labelledby="pending-tab">
+                                <div class="store-listing-style-04">
+                                    {% if not all_pending %}
+                                        <div class="alert alert-primary text-center my-5" role="alert">
+                                            No pending owner request exists in records
+                                        </div>
+                                    {% endif %}
+
+                                    {% for owner in all_pending %}
+
+                                        {% include 'admin_panel/inc/owner-list.inc.html' %}
+
+                                    {% endfor %}
+                                </div>
+
+                            </div>
+                            <div class="tab-pane fade" id="expires" role="tabpanel"
+                                 aria-labelledby="expires-tab">
+                                <div class="store-listing-style-04">
+                                    <div class="store-listing-item">
+                                        <div class="d-flex align-items-center flex-wrap flex-lg-nowrap border-bottom py-4 py-lg-0">
+                                            <div class="store media align-items-stretch py-4">
+                                                <a href="listing-details-full-image.html" class="store-image">
+                                                    <img src="images/shop/favourite-04.jpg" alt="Favourite 1">
+                                                </a>
+                                                <div class="media-body px-0 pt-4 pt-md-0">
+                                                    <a href="listing-details-image.html"
+                                                       class="font-size-lg font-weight-semibold text-dark d-inline-block mb-2 lh-1"><span
+                                                            class="letter-spacing-25">Furniture Assembly</span>
+                                                    </a>
+                                                    <ul class="list-inline store-meta mb-3 font-size-sm d-flex align-items-center flex-wrap">
+                                                        <li class="list-inline-item"><span
+                                                                class="badge badge-success d-inline-block mr-1">5.0</span><span
+                                                                class="number">4 rating</span>
+                                                        </li>
+                                                        <li class="list-inline-item separate"></li>
+                                                        <li class="list-inline-item"><span
+                                                                class="mr-1">From</span><span
+                                                                class="text-danger font-weight-semibold">$56.00</span>
+                                                        </li>
+                                                        <li class="list-inline-item separate"></li>
+                                                        <li class="list-inline-item"><a href="#"
+                                                                                        class="link-hover-secondary-primary">
+                                                            <svg class="icon icon-cog">
+                                                                <use xlink:href="#icon-cog"></use>
+                                                            </svg>
+                                                            <span>Service</span>
+                                                        </a></li>
+                                                    </ul>
+                                                    <div class="border-top pt-2 d-flex">
+                                                    <span
+                                                            class="d-inline-block mr-1"><i
+                                                            class="fal fa-map-marker-alt">
+                                                    </i>
+                                                        </span>
+                                                        <a href="#"
+                                                           class="text-secondary text-decoration-none address">San
+                                                            Francisco,
+                                                            CA</a>
+                                                        <div class="ml-0 ml-sm-auto">
+                                                            <span class="label">Status:</span>
+                                                            <span class="status experied">Experied</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="action ml-0 ml-lg-auto mt-3 mt-lg-0 align-items-center flex-wrap flex-sm-nowrap w-100 w-lg-auto">
+                                                <a href="page-submit-listing.html"
+                                                   class="btn btn-light btn-icon-left mb-2 mb-sm-0 font-size-md">
+                                                    <i class="fal fa-edit"></i>
+                                                    Edit
+                                                </a>
+                                                <a href="#"
+                                                   class="btn btn-primary btn-icon-left mb-2 mb-sm-0 px-5 font-size-md">
+                                                    <i class="fal fa-trash-alt"></i>
+                                                    Delete
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="mt-5">
+                        &copy; 2020 Thedir. All Rights Reserved.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    setTimeout(() => {
+        $("#dashboard-link").removeClass("active");
+    }, 100);
+</script>
+
+{% endblock content %}
+
+

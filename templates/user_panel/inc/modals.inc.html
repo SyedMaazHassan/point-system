@@ -1,0 +1,229 @@
+<div class="modal fade" id="create-business" style="z-index: +100000; margin-top: 70px;" tabindex="-1" role="dialog" aria-labelledby="create-business-label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="create-businessTitle">Create Business</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form action="createBusiness" id="create-business-form" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="modal-body" style="overflow-y: auto; height: 450px;">
+                    <!--Modal content-->                    
+                        <div class="form-group">
+                            <label>Banner image</label>
+                            
+                            <img id="showContainer" style="display:none; width: 100%; height: 110px; border: solid 1px #cccccc; border-radius: 4px;">
+                            <div style="height:0px; overflow:hidden">
+                                <input type="file" id="bannerImage" onchange="readURL(this, 'showContainer');" name="bannerImage" required>
+                            </div>
+                            <button type="button" onclick="upload_img('bannerImage');" class="d-flex justify-content-center align-items-center btn btn-primary btn-block">
+                                <i class="material-icons">upload</i>
+                                <p class="my-0 py-0 mx-2">Upload Banner image</p>
+                            </button>
+
+                            <small class="form-text text-muted">Enter the title name of your business</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Title name</label>
+                            <input type="text" class="form-control" name="titleName" required>
+                            <small class="form-text text-muted">Enter the title name of your business</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea name="description" cols="30" class="form-control" rows="5" required></textarea>
+                            <small class="form-text text-muted">Write a long description here to attract more cutsomers</small>
+                        </div>
+
+                        <div id="category-selection-section">
+                            <label>Select categories for your business</label>
+                            <div id="category-container" class="form-group">
+                                {% for category in categories %}
+                                    <span class="mylabel to-select-label category" id="category_{{category.id}}">{{category.name}}</span>
+                                {% endfor %}
+                        
+                            </div>
+                            <input type="hidden" id="selected_category" name="selectedcategory">
+                            <p class="text-danger" id="selected_category_error"></p>                    
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>Business email</label>
+                                    <input type="email" class="form-control" name="emailAddress" required>
+                                    <small class="form-text text-muted">Email for customers</small>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <label>Phone number</label>
+                                    <input type="text" pattern="[0-9]+" class="form-control" name="phoneNumber" required>
+                                    <small class="form-text text-muted">Email for customers</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Complete address</label>
+                            <textarea name="address" cols="30" class="form-control" rows="2" required></textarea>
+                            <small class="form-text text-muted">Enter complete address</small>
+                        </div>
+
+                        <div id="feature-selection-section">
+                            <label>Select feature of your business</label>
+                            <div id="feature-container" class="form-group">
+                                {% for feature in features %}
+                                    <span class="mylabel to-select-label feature" id="feature_{{feature.id}}">{{feature.name}}</span>
+                                {% endfor %}
+                        
+                            </div>
+                            <input type="hidden" id="selected_features" name="selectedFeatures">
+                            <p class="text-danger" id="selected_features_error"></p>                    
+                        </div>
+
+                        <div class="form-group">
+                            <label>Website link</label>
+                            <input type="url" class="form-control" name="websiteLink" required>
+                            <small class="form-text text-muted">Enter your website link here</small>
+                        </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+<script>
+    function upload_img(target_id) {
+        $("#"+target_id).click();
+    }
+
+    function readURL(input, target_id) {
+        nameFile = input.files[0].name.split(".");
+        nameFile = nameFile[nameFile.length-1];
+        console.log(nameFile);
+        if(nameFile=="jpg" || nameFile=="jpeg" || nameFile=="png"){
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+    
+                reader.onload = function (e) {
+                    if (target_id=='blah') {
+                    $('#'+target_id)
+                        .attr('src', e.target.result)
+                        .width('100%')
+                        .height(350);
+                    
+                    }else{
+
+                    $('#'+target_id)
+                        .attr('src', e.target.result)
+                        .width('100%')
+                        .height(140);
+
+                    }
+                    
+                };
+    
+                reader.readAsDataURL(input.files[0]);
+                $("#"+target_id).css('display', '');
+            }
+        }else{
+            $("#"+target_id).css('display', 'none');
+
+            alert("Invalid file type!");
+        }
+        
+    }
+
+    var selected_features = [];
+    var selected_category = [];
+
+    $(".mylabel").on('click', function(){
+        $("#feature-error").text("");
+        let collection = this.id.split("_");
+        let element = collection[1];
+        let target_list = null;
+        if ($(this).hasClass("feature")) {
+            target_list = selected_features;
+        }else if($(this).hasClass("category")){
+            target_list = selected_category;
+        }
+
+        if (target_list.includes(element)) {
+            // already selected
+            target_list.splice(target_list.indexOf(element), 1);
+            $(this).addClass("to-select-label");
+            $(this).removeClass("selected-label");
+            
+        }else{
+            // already unselected
+            $("#selected_features_error").text("");
+            $("#selected_category_error").text("");
+            target_list.push(element);
+            $(this).addClass("selected-label");
+            $(this).removeClass("to-select-label");
+
+        }
+
+        if ($(this).hasClass("feature")) {
+            selected_features = target_list;
+        }else if($(this).hasClass("category")){
+            selected_category = target_list;
+        }
+
+        console.log(selected_features);
+        console.log(selected_category);
+
+        if (selected_features.length > 0) {
+            $("#selected_features").val(JSON.stringify(selected_features));
+        }else{
+            $("#selected_features").val("");
+            $("#selected_features_error").text("Kindly select at least 1 feature!");
+        }
+
+        if (selected_category.length > 0) {
+            $("#selected_category").val(JSON.stringify(selected_category));
+        }else{
+            $("#selected_category").val("");
+            $("#selected_category_error").text("Kindly select at least 1 category!");
+        }
+
+    });
+
+    $("#create-business-form").on("submit", function () {
+        
+        if (selected_category.length == 0) {
+            $("#selected_category_error").text("Kindly select at least 1 category!");
+            return false;
+        }
+
+        if (selected_features.length == 0) {
+            $("#selected_features_error").text("Kindly select at least 1 feature!");
+            return false;
+        }
+
+        return true;
+    });
+
+
+</script>

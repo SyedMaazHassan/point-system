@@ -1,0 +1,153 @@
+{% extends 'inc/base.html' %}
+{% load static %}
+{% block content %}
+    <style>
+        .my-primary{
+            background-color: #ffffff !important;
+            border: none !important;
+            color: #ff5a5f;
+            font-weight: bold;
+            border-bottom: solid 2px #ff5a5f !important;
+            border-radius: 0px;
+        }
+    </style>
+    <!-- #header end -->
+    <div class="row">
+        <div class="col-sm-4"></div>
+
+        <div class="col-sm-4 d-flex align-items-center py-0 pb-5">
+            <div class="row" style="width: 100%;">
+                <div class="col-12 d-flex justify-content-center align-items-center" style="min-height: 60vh">
+                    <div class="my-form my-5" id="mainDiv">
+                        <h4 class="text-primary">Register as</h4>
+                        <div class="row my-2 p-2 px-3">
+                            <div class="col-sm-6 col-6 px-2">
+                                <button type="button" class="btn btn-block form-type" id="myOwnerTrigger">Owner</button>
+                            </div>
+
+                            <div class="col-sm-6 col-6 px-2">
+                                <button type="button" class="btn btn-block form-type" id="myUserTrigger">User</button>
+                            </div>
+                        </div>
+                        <div style="width: 350px;">
+
+                        <form autocomplete="off" style="text-align:center; margin-top: 10px;" class="registrationForms px-2" id="myOwnerTriggerForm" action="createOwner" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+          
+                            <input class="field form-control" id="name" name="name" type="text" value="{{name}}" placeholder="First name" required>
+                            <input class="field form-control" id="l_name" name="l_name" type="text" value="{{l_name}}" placeholder="Last name" required>
+                            <input class="field form-control" id="telephone" name="telephone" type="text" pattern="[0-9]+" value="{{telephone}}" placeholder="Telephone no." required>
+                            <input class="field form-control" id="email" name="email" type="email" value="{{email}}" placeholder="Business email" required>
+                            <input class="field form-control mb-0" id="orgNo" name="orgNo" type="text" maxlength="11" value="{{orgNo}}" placeholder="Organization no. (10 digits)" required>
+                            <div class="text-left">
+                                <small>example: 012345-6789</small>
+                            </div>
+                            <input class="field form-control" id="pass1" name="pass1" type="password" value="{{pass1}}" placeholder="Password" required>
+                            <input class="field form-control" id="pass2" name="pass2" type="password" value="{{pass2}}" placeholder="Confirm Password" required>
+                            <p id="error" 
+                                style="
+                                    text-align: left; 
+                                    transition-duration:0.25s;
+                                    color:#ed4337;"
+                                >
+                                {% for message in messages %}
+                                    {{message}}
+                                {% endfor %}
+                            </p>
+                            <button class="btn btn-block btn-primary" type="submit">SIGNUP</button>        
+                            <p class="my-4">Already registered?</p>
+                            <a href="{% url 'login' %}" style="text-decoration: none;"><button class="btn btn-block btn-secondary" type="button">LOGIN</button></a>
+                            <br>        
+                        </form>
+
+                        <form autocomplete="off" style="text-align:center; margin-top: 10px;" class="registrationForms px-2" id="myUserTriggerForm" action="createUser" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+          
+                            <input class="field form-control" id="name" name="name" type="text" value="{{name}}" placeholder="First name" required>
+                            <input class="field form-control" id="l_name" name="l_name" type="text" value="{{l_name}}" placeholder="Last name" required>
+                            <input class="field form-control" id="telephone" name="telephone" type="text" pattern="[0-9]+" value="{{telephone}}" placeholder="Telephone no." required>
+                            <input class="field form-control" id="email" name="email" type="email" value="{{email}}" placeholder="Email" required>
+                            <input class="field form-control" id="address" name="address" type="text" value="{{address}}" placeholder="Address" required>
+                            
+                            <div class="row py-0 my-0">
+                                <div class="col-sm-6 py-1 col-6">
+                                    <input class="field form-control my-0" id="areaCode" minlength="5" name="areaCode" type="text" value="{{areaCode}}" placeholder="Area code" required>
+                                </div>
+
+                                <div class="col-sm-6 py-1 col-6">
+                                    <input class="field form-control my-0" id="city" name="city" type="text" value="{{city}}" placeholder="City" required>
+                                </div>
+                            </div>
+                            
+                            <input class="field form-control" id="pass1" name="pass1" type="password" value="{{pass1}}" placeholder="Password" required>
+                            <input class="field form-control" id="pass2" name="pass2" type="password" value="{{pass2}}" placeholder="Confirm Password" required>
+                            <p id="error" 
+                                style="
+                                    text-align: left; 
+                                    transition-duration:0.25s;
+                                    color:#ed4337;"
+                                >
+                                {% for message in messages %}
+                                    {{message}}
+                                {% endfor %}
+                            </p>
+                            <button class="btn btn-block btn-primary" type="submit">SIGNUP</button>        
+                            <p class="my-4">Already registered?</p>
+                            <a href="{% url 'login' %}" style="text-decoration: none;"><button class="btn btn-block btn-secondary" type="button">LOGIN</button></a>
+                            <br>        
+                        </form>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>  
+        </div>
+
+        <div class="col-sm-4"></div>    
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script>
+
+           var x = "{{border}}";
+            if(x=="email"){
+                $("#email").css(
+                    'border-color', '#ed4337'
+                );
+            }else if(x=="password"){
+                $("#pass1, #pass2").css(
+                    'border-color', '#ed4337'
+                );
+            }else if(x=="telephone"){
+                $("#telephone").css(
+                    'border-color', '#ed4337'
+                );
+            }else if(x=="org"){
+                $("#orgNo").css(
+                    'border-color', '#ed4337'
+                );
+            };
+
+            if (x != "") {
+                $("{{type}}").css('display', 'block');
+                // $("{{btn}}").removeClass("btn-outline-primary");
+                $("{{btn}}").addClass("my-primary");
+            }
+
+            $(".form-type").on('click', function () {
+                $(".form-type").removeClass("my-primary");
+                // $(".form-type").addClass("btn-outline-primary");
+               
+                // $(this).removeClass("btn-outline-primary");
+                $(this).addClass("my-primary");
+
+                $(".registrationForms").css('display', 'none');
+
+                let myVisibleForm = $(this).prop("id") + "Form";
+                console.log(myVisibleForm);
+                $(`#${myVisibleForm}`).css('display', 'block');
+            });
+    </script>
+{% endblock %}
+

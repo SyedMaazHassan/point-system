@@ -1,0 +1,750 @@
+{% extends 'inc/base.html' %}
+{% load static %}
+{% block classpanel %} panel dashboards{% endblock classpanel %}
+{% block content %}
+
+
+
+<div class="modal fade" id="send-points" tabindex="-1" role="dialog" aria-labelledby="send-points-label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="send-pointsTitle">Send points</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!--Modal content-->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div id="wrapper-content" class="wrapper-content pt-0 pb-0">
+    <div class="page-wrapper d-flex flex-wrap flex-xl-nowrap">
+       
+        {% include 'admin_panel/inc/profile-side-panel.inc.html' %}
+
+        <div class="page-container">
+            <div class="container-fluid">
+                <div class="page-content-wrapper d-flex flex-column justify-content-center">
+                    Owner
+                    <h2 class="mb-5 text-secondary">{{ owner.owner_first_name }} {{ owner.owner_last_name }}</h2>
+
+
+                    <div class="row">
+
+                            <div class="col-sm-3  pb-5">
+                                <div class="card">
+
+                                        <div class="card-body text-center">
+                                            <p class="py-0 my-0">Email</p>
+                                            <!-- <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 text-primary lh-1">
+                                                <i class="material-icons mt-1" style="font-size: 45px;">person</i>
+                                            </span> -->
+                                            <div>
+                                                <h6 class="my-2">{{ owner.business_email }}</h6>
+                                            </div>
+                                        </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3 pb-5">
+                                <div class="card">
+
+                                        <div class="card-body text-center">
+                                            <p class="py-0 my-0">Telephone</p>
+                                            <!-- <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 text-primary lh-1">
+                                                <i class="material-icons mt-1" style="font-size: 45px;">person</i>
+                                            </span> -->
+                                            <div>
+                                                <h6 class="my-2">{{ owner.business_telephone }}</h6>
+                                            </div>
+                                        </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3 pb-5">
+                                <div class="card">
+
+                                        <div class="card-body text-center">
+                                            <p class="py-0 my-0">Registered time</p>
+                                            <!-- <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 text-primary lh-1">
+                                                <i class="material-icons mt-1" style="font-size: 45px;">person</i>
+                                            </span> -->
+                                            <div>
+                                                <h6 class="my-2">{{ owner.registered_time }}</h6>
+                                            </div>
+                                        </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3 pb-5">
+                                <div class="card">
+
+                                        <div class="card-body text-center">
+                                            <p class="py-0 my-0">Status</p>
+                                            <!-- <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 text-primary lh-1">
+                                                <i class="material-icons mt-1" style="font-size: 45px;">person</i>
+                                            </span> -->
+                                            <div>
+                                                <h6 class="my-2 text-white">
+                                                    <span class="badge px-2 status status-badge {{ owner.get_status }}">{{ owner.get_status }}</span> 
+                                                </h6>
+                                            </div>
+                                        </div>
+
+                                </div>
+                            </div>
+
+                    </div>
+
+
+                    <div class="my-3" id="business-section">
+
+                        <h3 class="mb-5 text-secondary">Business list</h3>
+
+                        <div class="row">
+                            <div class="col-sm-12" id="left-panel">
+                                <div class="tab-pane fade show mb-5" id="all" role="tabpanel" aria-labelledby="all-tab">
+                                    <div class="store-listing-style-04 bg-white shadow-boxing">
+                                        {% for business in all_business %}
+                                            <div class="store-listing-item px-4 business_containers" id="business_container_{{business.id}}">
+                                                <div class="d-flex align-items-center flex-wrap flex-lg-nowrap border-bottom py-4 py-lg-0">
+                                                    <div class="store media align-items-stretch py-4">
+                                                        <a href="listing-details-full-image.html" class="store-image">
+                                                            <img src="media/{{business.banner_image}}" style="height: 130px;" alt="Favourite 1">
+                                                        </a>
+                                                        <div class="media-body px-0 pt-4 pt-md-0">
+                                                            <a href="listing-details-image.html" class="font-size-lg font-weight-semibold text-dark d-inline-block mb-2 lh-1"><span class="letter-spacing-25">
+                                                                {{ business.title_name }}
+                                                            </span>
+                                                            </a>
+                                                        
+                                                            <div class="border-top pt-2 d-flex mt-2">
+                                                            
+                                                            </div>
+                                                            
+                                                            <div class="ml-0 ml-sm-auto my-1">
+                                                                <i class="fas fa-map-marker-alt mr-2"></i>
+                                                                {{ business.written_address }}
+                                                            </div>
+            
+                                                            <div class="ml-0 ml-sm-auto my-1">
+                                                                <i class="fas fa-envelope mr-2"></i>
+                                                                {{ business.email_address }}
+                                                            </div>
+            
+                                                            <div class="ml-0 ml-sm-auto my-1">
+                                                                <i class="fas fa-phone mr-2"></i>
+                                                                {{ business.phone_number }}
+                                                            </div>
+            
+                                                        </div>
+                                                    </div>
+                                                    <div class="action ml-0 ml-lg-auto mt-3 mt-lg-0 align-items-center flex-wrap flex-sm-nowrap w-100 w-lg-auto">
+                                                        
+                                                        <!-- <a href="page-submit-listing.html" class="btn btn-light btn-icon-left mb-2 mb-sm-0 font-size-md">
+                                                            <i class="fal fa-edit"></i>
+                                                            Edit
+                                                        </a> -->
+
+
+                                                        <div class="text-center">
+                                                            <button onclick="get_customer_list('{{business.id}}')" style="margin: auto;" class="btn btn-outline-primary btn-icon-left mb-2 mb-sm-0 px-5 font-size-md">
+                                                                <!-- <i class="fal fa-send"></i> -->
+                                                                Points details
+                                                            </button>
+                
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+            
+                                        {% if not all_business %}
+                                            <div class="alert alert-primary text-center" style="font-size: 25px;" role="alert">
+                                                This owner has not business yet!
+                                            </div>
+                                        {% endif %}
+                                    
+                                    </div>
+                                
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4" id="right-panel" style="display: none;">
+                                <div class="bg-white shadow-boxing">
+                                    <!-- <div class="text-center" style="background-image: url(media/{{all_business.1.banner_image}});">
+                                                                
+                                    </div> -->
+                                    <div class="d-flex align-items-center">
+                                        <h6 id="title_holder" style="width: 90%;" class="bg-white p-3 my-0"></h6>
+                                        <div style="width: 10%;">
+                                            <i class="material-icons my-0 mk-pointer" onclick="close_right_panel()">close</i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <img id="image_holder" style="height: 150px; width: 100%;" src="" alt="">
+                                    </div>
+
+                                    <div class="p-3 text-center">
+                                        required points   
+                                        <h2 class="mb-4" id="total_holder"></h2>
+                                        <!-- <h6 class="my-3">{{all_business.0.title_name}}</h6> -->
+                                        <!-- <h6 class="text-left text-dark">Details</h6> -->
+                                        <table class="table table-hover border text-left">
+                                            <thead class="thead-light">
+                                                <th class="px-3">Customer name</th>
+                                                <th>Points</th>
+                                            </thead>
+                                            <tbody id="table_body">
+                                                
+                                          
+                                            
+                                            </tbody>
+                                        </table>
+
+                                   
+                                        
+
+                                    </div>
+
+                                    <div class="p-3 mt-2" id="send-section"  style="display: none; border-left: solid 4px #b8b8b8; background-color: rgb(248, 248, 248);">
+                                        <div class="row px-3">
+                                            <div class="col-sm-12 py-2 px-1">
+                                                <h6 class="text-left">Give points to these buyers</h6>
+                                            </div>
+
+                                            <div class="col-sm-7 px-1">
+                                                <input class="form-control" placeholder="Enter points" id="points_to_be_given" type="number" step="0.01" required>
+                                            </div>
+
+                                            <div class="col-sm-5 px-1">
+                                                <button onclick="send_points()" style="margin: auto;" class="btn btn-primary btn-block btn-icon-left mb-sm-0 px-5 font-size-md">
+                                                    <!-- <i class="fal fa-send"></i> -->
+                                                    <i class="fal fa-paper-plane"></i>
+                                                    Send
+                                                </button>
+                                            </div>  
+                                            <div class="col-sm-12 px-1 py-1">
+                                                <small id="at-most-fb">You can give at most <b><span class="admin_total_balance">{{ admin_account_info.total_balance }}</span></b> points</small>
+                                            </div>
+
+                                            <div class="col-sm-12 py-1 px-1">
+                                                <div  id="loading-spinner" style="display: none;" class="text-center py-3">
+                                                    <div class="text-center spinner-border text-primary" role="status">
+                                                        <span class="sr-only">Loading...</span>
+                                                    </div>    
+                                                </div>
+
+                                                <div id="error-msg" style="display: none;" class="alert alert-primary alert-dismissible mb-0 fade show" role="alert">
+                                                    Something went wrong!
+                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+
+                                                <div id="success-msg" style="display: none;" class="alert alert-success mb-0 alert-dismissible fade show" role="alert">
+                                                    Points sent successfully!
+                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+
+                                                <div id="error-2-msg" style="display: none;" class="alert alert-danger mb-0 alert-dismissible fade show" role="alert">
+                                                    Value must be less than or equal to <b><span id="point-needed"></span></b>
+                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <!-- <div class="features card-deck">
+                        
+                        
+
+                     
+
+
+                    
+                        <div class="card rounded-0 border-0 bg-transparent mb-6">
+                            <div class="card-body d-flex align-items-center py-6 px-8 bg-white">
+                                <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 text-darker-light lh-1">0</span>
+                                <span class="font-size-md font-weight-semibold text-uppercase text-dark lh-13">Pending<br> Listings</span>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 border-0 bg-transparent mb-6">
+                            <div class="card-body d-flex align-items-center py-6 px-8 bg-white">
+                                <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 lh-1 published">12</span>
+                                <span class="font-size-md font-weight-semibold text-uppercase text-dark lh-13">published<br> Listings</span>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 border-0 bg-transparent mb-6">
+                            <div class="card-body d-flex align-items-center py-6 px-8 bg-white">
+                                <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 lh-1 experied">2</span>
+                                <span class="font-size-md font-weight-semibold text-uppercase text-dark lh-13">Experied<br> Listings</span>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 border-0 bg-transparent mb-6">
+                            <div class="card-body d-flex align-items-center p-6 bg-white">
+                                <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 lh-1 active">1</span>
+                                <span class="font-size-md font-weight-semibold text-uppercase text-dark lh-13">Active campaign <br> Listings</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex two-column mb-13 mx-n3">
+                        <div class="page-left mb-6 px-3">
+                            <div class="alert alert-success mb-6 alert-dismissible fade show d-flex align-items-center pr-3">
+                                <div class="font-size-lg py-0 mr-6">Your listing <a
+                                        href="listing-details-full-image.html"
+                                        class="font-weight-semibold link-hover-dark-primary">Hotel Govendor</a>
+                                    has
+                                    been
+                                    approved!
+                                </div>
+                                <div class="ml-auto">
+                                    <a href="#" class="alert-button py-0 font-size-h3 lh-1" data-dismiss="alert"
+                                       aria-label="Close"><i class="fal fa-times"></i></a>
+                                </div>
+                            </div>
+                            <div class="facts-box mb-6 row">
+                                <div class="col-lg-4 mb-6 mb-xl-0">
+                                    <div class="card view rounded-0 border-0 text-white">
+                                        <div class="card-body d-flex align-items-center p-0">
+                                            <div class="content mr-auto">
+                                                <span class="font-size-h1 font-weight-semibold lh-1 d-block">824</span>
+                                                <span class="font-size-lg">Total Views</span>
+                                            </div>
+                                            <div class="fact-icon">
+                                                <svg class="icon icon-eye">
+                                                    <use xlink:href="#icon-eye"></use>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-6 mb-xl-0">
+                                    <div class="card review rounded-0 border-0 text-white">
+                                        <div class="card-body d-flex align-items-center p-0">
+                                            <div class="content mr-auto">
+                                                <span class="font-size-h1 font-weight-semibold lh-1 d-block">73</span>
+                                                <span class="font-size-lg">Total Reviews</span>
+                                            </div>
+                                            <div class="fact-icon">
+                                                <i class="fal fa-star"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="card time-bookmark rounded-0 border-0 text-white">
+                                        <div class="card-body d-flex align-items-center p-0">
+                                            <div class="content mr-auto">
+                                                <span class="font-size-h1 font-weight-semibold lh-1 d-block">269</span>
+                                                <span class="font-size-lg">Times Bookmarked</span>
+                                            </div>
+                                            <div class="fact-icon">
+                                                <i class="fal fa-bookmark"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row tables">
+                                <div class="col-xl-6 mb-6 mb-xl-0">
+                                    <div class="card rounded-0 border-0 reccent-activities">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-capitalize border-bottom pb-2 mb-2">
+                                                Recent
+                                                Activities</h5>
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="icon-box no-shape icon-box-style-03 d-flex">
+                                                            <span class="icon-box-icon">
+                                                                <svg class="icon icon-layers"><use
+                                                                        xlink:href="#icon-layers"></use></svg>
+                                                            </span>
+                                                                    <div class="content-box">Your listing <a
+                                                                            href="listing-details-full-image.html"
+                                                                            class="font-weight-semibold link-hover-dark-primary">Hotel
+                                                                        Govendor</a>
+                                                                        has
+                                                                        been approved!
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>8 Hours ago</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="icon-box no-shape icon-box-style-03 d-flex">
+                                                            <span class="icon-box-icon">
+                                                                <i class="fal fa-bookmark"></i>
+                                                            </span>
+                                                                    <div class="content-box"><a href="#"
+                                                                                                class="font-weight-semibold link-hover-dark-primary">David
+                                                                        Eggsy</a>
+                                                                        bookmarked your <a
+                                                                                href="listing-details-full-image.html"
+                                                                                class="font-weight-semibold link-hover-dark-primary">Thai
+                                                                            Taste’s Restaurant</a>
+                                                                        listing!
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>15 Hours ago</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="icon-box no-shape icon-box-style-03 d-flex">
+                                                            <span class="icon-box-icon">
+                                                                <i class="fal fa-star"></i>
+                                                            </span>
+                                                                    <div class="content-box"><a href="#"
+                                                                                                class="font-weight-semibold link-hover-dark-primary">Kathy
+                                                                        Brown</a>
+                                                                        left a review <a
+                                                                                href="panel-review-submitted.html"
+                                                                                class="font-weight-semibold link-hover-dark-primary">5
+                                                                            Star</a>
+                                                                        on
+                                                                        <a href="listing-details-full-image.html"
+                                                                           class="font-weight-semibold link-hover-dark-primary">Roman
+                                                                            Kraft Hotel</a>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>1 days ago</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="icon-box no-shape icon-box-style-03 d-flex">
+                                                            <span class="icon-box-icon">
+                                                                <svg class="icon icon-layers"><use
+                                                                        xlink:href="#icon-layers"></use></svg>
+                                                            </span>
+                                                                    <div class="content-box">Your listing <a
+                                                                            href="listing-details-full-image.html"
+                                                                            class="font-weight-semibold link-hover-dark-primary">Hotel
+                                                                        Govendor</a>
+                                                                        has
+                                                                        been approved!
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>8 Hours ago</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="icon-box no-shape icon-box-style-03 d-flex">
+                                                            <span class="icon-box-icon">
+                                                                <i class="fal fa-bookmark"></i>
+                                                            </span>
+                                                                    <div class="content-box"><a href="#"
+                                                                                                class="font-weight-semibold link-hover-dark-primary">David
+                                                                        Eggsy</a>
+                                                                        bookmarked your <a
+                                                                                href="listing-details-full-image.html"
+                                                                                class="font-weight-semibold link-hover-dark-primary">Thai
+                                                                            Taste’s Restaurant</a>
+                                                                        listing!
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>15 Hours ago</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="icon-box no-shape icon-box-style-03 d-flex">
+                                                            <span class="icon-box-icon">
+                                                                <i class="fal fa-star"></i>
+                                                            </span>
+                                                                    <div class="content-box"><a href="#"
+                                                                                                class="font-weight-semibold link-hover-dark-primary">Kathy
+                                                                        Brown</a>
+                                                                        left a review <a
+                                                                                href="panel-review-submitted.html"
+                                                                                class="font-weight-semibold link-hover-dark-primary">5
+                                                                            Star</a>
+                                                                        on
+                                                                        <a href="listing-details-full-image.html"
+                                                                           class="font-weight-semibold link-hover-dark-primary">
+                                                                            Roman Kraft Hotel</a>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>1 days ago</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6">
+                                    <div class="card rounded-0 border-0 invoices">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-capitalize border-bottom pb-2 mb-2">
+                                                Invoices</h5>
+                                            <div class="table-responsive-sm">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Date</th>
+                                                            <th>Plan</th>
+                                                            <th>Amount</th>
+                                                            <th>Status</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <a href="panel-invoice-details.html"
+                                                                   class="link-hover-dark-blue">INV-00001</a>
+                                                            </td>
+                                                            <td>22/10/2017</td>
+                                                            <td>Basic</td>
+                                                            <td>$264.00</td>
+                                                            <td><span class="status paid">Paid</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <a href="panel-invoice-details.html"
+                                                                   class="link-hover-dark-blue">INV-00002</a>
+
+                                                            </td>
+                                                            <td>15/16/2016</td>
+                                                            <td>Premium</td>
+                                                            <td>$528.00</td>
+                                                            <td><span class="status overdue">Overdue</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <a href="panel-invoice-details.html"
+                                                                   class="link-hover-dark-blue">INV-00003</a>
+                                                            </td>
+                                                            <td>18/10/2017</td>
+                                                            <td>Ultimate</td>
+                                                            <td>$1,528.00</td>
+                                                            <td><span class="status pending">Pending</span></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="page-right px-3">
+                            <div class="card rounded-0 border-0 contact py-6 px-3">
+                                <div class="card-body text-center p-0">
+                                    <div class="contact-icon text-dark mb-3">
+                                        <svg class="icon icon-headset">
+                                            <use xlink:href="#icon-headset"></use>
+                                        </svg>
+                                    </div>
+                                    <div class="text-dark font-size-md mb-5">
+                                        <p class="mb-2">Have any problem and<br> need support? Call Us directly
+                                        </p>
+                                        <p class="font-weight-semibold h5 mb-2">(+34) 967-123-888</p>
+                                        <p>Or chat with us</p>
+                                    </div>
+                                    <a href="#" class="btn btn-primary font-size-md px-8 lh-15">Contact Us</a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="copy-right mt-auto">
+                        &copy; 2020 Thedir. All Rights Reserved.
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    var BUSINESS_ID = null;
+    var is_value = false;
+    var BUSINESS_TOTAL = null;
+
+    setTimeout(() => {
+        $("#dashboard-link").removeClass("active");
+    }, 100);
+
+    function get_customer_list(business_id) {
+        $("#points_to_be_given").val("");
+        $("#at-most-fb").removeClass("text-danger");
+
+        BUSINESS_ID = business_id;
+        // MARK AS SELECTED
+        $(".business_containers").removeClass("selected-business");
+        $(`#business_container_${business_id}`).addClass("selected-business");
+
+        $.ajax({
+            url: "{% url 'get_customer_list' %}",
+            type: "GET",
+            data: `business_id=${business_id}`,
+            success: (response)=>{
+                // SET value in holder
+                console.log(response);
+                if (response) {          
+                    BUSINESS_TOTAL = response.total;
+
+                    if (BUSINESS_TOTAL > 0) {
+                        $("#send-section").show();
+                    }else{
+                        $("#send-section").hide();
+                    }
+
+
+                    $("#image_holder").attr("src", "media/"+response.image);
+                    $("#title_holder").text(response.business_name);
+                    $("#total_holder").text(response.total);
+                    $("#point-needed").text(response.total);
+                    $("#table_body").children().remove();
+                    for (let i = 0; i < response.customer_list.length; i++) {
+                        let customer = response.customer_list[i];
+                        $("#table_body").append(`
+                            <tr>
+                                <td class="px-3">${ customer.name }</td>
+                                <td>${ customer.total_points_owe }</td>
+                            </tr>
+                        
+                        `);
+                    }
+
+                    if (response.customer_list.length == 0) {
+                        $("#table_body").append(`
+                            <tr>
+                                <td class="px-3 pt-3" colspan="2">
+                                    <div class="alert text-center alert-warning" role="alert">
+                                        No customer yet!
+                                    </div>    
+                                </td>
+                            </tr>
+                        
+                        `);
+                    }
+
+                    // show right panel
+                    $("#right-panel").show();
+
+                    // make left panel small
+                    $("#left-panel").removeClass("col-sm-12");
+                    $("#left-panel").addClass("col-sm-8");
+
+                    // Scroll up
+                    $('html, body').animate({
+                        scrollTop: $('#business-section').offset().top
+                    }, 200);
+                }else{
+                    BUSINESS_TOTAL = null;
+                }
+            }
+        })
+    }
+
+    function close_right_panel() {
+        $(".business_containers").removeClass("selected-business");
+        $("#left-panel").addClass("col-sm-12");
+        $("#left-panel").removeClass("col-sm-8");
+        $("#right-panel").hide();
+    }
+
+    function send_points() {
+        if (is_value) {
+            $("#success-msg").hide();
+            $("#error-msg").hide();
+            $("#loading-spinner").show();
+            let value = $("#points_to_be_given").val();
+            $.ajax({
+                url: "{% url 'send_points' %}",
+                type: "GET",
+                data: {
+                    'business_id': BUSINESS_ID,
+                    'value': value
+                },
+                success: (response)=>{
+                    $("#loading-spinner").hide();
+                    if (response.status == true) {
+                        $("#success-msg").show();
+                        $("#error-msg").hide();
+                        $("#error-2-msg").hide();
+                        $("#points_to_be_given").val("");
+                        $(".admin_total_balance").text(response.admin_account_info.total_balance); 
+                        get_customer_list(BUSINESS_ID);
+                    }else{
+                        $("#success-msg").hide();
+                        $("#error-msg").show();
+                    }
+                    console.log(response);
+                }
+            })
+        }
+    }
+
+
+    $("#points_to_be_given").on("input", function () {
+        let value = this.value;
+        let admin_account_balance = '{{ admin_account_info.total_balance }}';
+        if (value && value > 0) {
+            if (parseFloat(value) <= parseFloat(admin_account_balance)) {
+                
+                if (BUSINESS_TOTAL && (parseFloat(value) <= parseFloat(BUSINESS_TOTAL))) {
+                    is_value = true;
+                    $("#error-2-msg").hide();
+                    $("#at-most-fb").removeClass("text-danger");
+                    return;   
+                }else{
+                    $("#error-2-msg").show();
+                }
+                   
+            }else{
+                $("#at-most-fb").addClass("text-danger");
+            }
+        }
+        is_value = false;
+    });
+
+    let default_business = "{{ request.GET.select_business }}";
+
+    if (default_business) {
+        get_customer_list(default_business);
+    }
+
+
+</script>
+{% endblock content %}
+
+

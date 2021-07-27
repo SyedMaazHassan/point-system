@@ -1,0 +1,120 @@
+{% extends 'inc/base.html' %}
+{% load static %}
+{% block classpanel %} panel my-profile{% endblock classpanel %}
+{% block content %}
+
+<div id="wrapper-content" class="wrapper-content pt-0 pb-0">
+    <div class="page-wrapper d-flex flex-wrap flex-xl-nowrap">
+        
+        {% include 'user_panel/inc/modals.inc.html' %}
+        {% if admin %}
+            {% include 'admin_panel/inc/profile-side-panel.inc.html' %}
+        {% else %}
+            {% include 'user_panel/inc/profile-side-panel.inc.html' %}
+        {% endif %}
+        <div class="page-container">
+            <div class="container-fluid">
+                <div class="page-content-wrapper d-flex flex-column">
+                    <h2 class="mb-5 text-secondary">{{ page_title }}</h2>
+                    <div class="row">
+                        {% for business in all_businesses %}
+
+                        <div class="col-lg-4 mb-4 mb-lg-0">
+                            
+                                
+                            <div class="box" style="border-radius: 10px important;">
+                                <div class="store card rounded-0 border-0">
+                                    <div class="position-relative store-image">
+                                        <a>
+                                            <img src="media/{{ business.banner_image }}" style="height: 160px;" alt="store 1"
+                                                 class="card-img-top rounded-0">
+                                        </a>
+                                        <div class="image-content position-absolute d-flex align-items-center">
+                                            <div class="content-right ml-auto d-flex">
+                                                <a href="media/{{ business.banner_image }}"
+                                                   class="item viewing"
+                                                   data-toggle="tooltip"
+                                                   data-placement="top"
+                                                   title="Quick view" data-gtf-mfp="true">
+                                                    <svg class="icon icon-expand">
+                                                        <use xlink:href="#icon-expand"></use>
+                                                    </svg>
+                                                </a>
+                                                <a href="#" class="item marking" data-toggle="tooltip"
+                                                   data-placement="top"
+                                                   title="Bookmark"><i
+                                                        class="fal fa-bookmark"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body pb-4 border-right border-left">
+                                        <a href="{% url 'business' business_name=business.link_name %}"
+                                           class="card-title h5 text-dark d-inline-block mb-2"><span
+                                                class="letter-spacing-25">{{ business.title_name }}</span></a>
+                                        <ul class="list-inline store-meta mb-4 font-size-sm d-flex align-items-center flex-wrap">
+                                            <li class="list-inline-item"><span
+                                                    class="badge badge-success mr-1 d-inline-block">5.0</span><span
+                                                    class="number">4 rating</span>
+                                            </li>
+                                            <li class="list-inline-item separate"></li>
+                                            <li class="list-inline-item"><span class="mr-1">From</span><span
+                                                    class="text-danger font-weight-semibold">$9.0</span>
+                                            </li>
+                                            <li class="list-inline-item separate"></li>
+                                            <li class="list-inline-item"><span
+                                                    class="text-green">Open now!</span>
+                                            </li>
+                                        </ul>
+                                        <div class="media">
+
+                                            {% if business.super_owner.profile_picture %}
+
+                                                <a href="#" class="d-inline-block mr-3"><img
+                                                        src="media/{{ business.super_owner.profile_picture }}"
+                                                        alt="testimonial" class="rounded-circle">
+                                                </a>
+
+                                            {% endif %}
+
+                                            <div class="media-body lh-14 font-size-sm" title="{{ business.description }}">
+                                                {{ business.wrapped_description }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer rounded-0 border-top-0 pb-3 pt-0 bg-transparent border-left border-right border-bottom">
+                                        <div class="border-top pt-3">
+                                                    <span class="d-inline-block mr-1">
+                                                        <i class="fal fa-map-marker-alt"></i>
+                                                    </span>
+                                            <a
+                                               class="text-secondary pr-3 text-decoration-none address" title="{{ business.written_address }}">
+                                                {{ business.wrapped_location }}      
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+
+
+{% endblock content %}
+
+

@@ -1,0 +1,105 @@
+{% load static %}
+<div class="store-listing-item">
+    <div class="d-flex align-items-center flex-wrap flex-lg-nowrap border-bottom py-4 py-lg-0">
+        <div class="store media align-items-stretch py-4">
+            
+            <span class="font-size-h1 d-flex align-items-center font-weight-semibold d-inline-block mr-2 text-primary lh-1">
+                <i class="material-icons mt-1 mr-5 radius-100 r-100" style="font-size: 60px;">person</i>
+            </span>
+            <!-- <a href="listing-details-full-image.html" class="">
+                <img src="{% static 'images/my-profile-icon.png' %}" style="border-radius: 100%;" class="r-100" alt="Favourite 1">
+            </a> -->
+            <div class="media-body px-0 pt-4 pt-md-0">
+                <a href="{% url 'owners' owner_id=owner.id %}"
+                class="font-size-lg font-weight-semibold text-dark d-inline-block mb-2 lh-1"><span
+                        class="letter-spacing-25">Owner: {{ owner.owner_first_name }} {{ owner.owner_last_name }}</span>
+                </a>
+                <ul class="list-inline store-meta mb-3 font-size-sm d-flex align-items-center flex-wrap">
+                    <li class="list-inline-item">
+
+                        <span
+                            class="number">{{ owner.business_email }}
+                        </span>
+                    </li>
+                
+                    <li class="list-inline-item separate"></li>
+                    <li class="list-inline-item">
+                        {{ owner.business_telephone }}
+                    </li>
+                </ul>
+                <div class="border-top pt-2 d-flex">
+                    <span class="d-inline-block mr-1">
+                        <i class="material-icons" style="font-size:20px;"> calendar_today</i>
+                    </span>
+                    <a 
+                    class="text-secondary mt-0 text-decoration-none address">
+                
+                    {{ owner.registered_time }}
+                    </a>
+                    <div class="ml-0 ml-sm-auto">
+                        <span class="label">Status:</span>
+                        <span class="badge px-1 status status-badge {{ owner.get_status }}">{{ owner.get_status }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="action ml-0 ml-lg-auto mt-3 mt-lg-0 align-items-center flex-wrap flex-sm-nowrap w-100 w-lg-auto">
+            {% if owner.status == 0 %}
+
+                <a  onclick="mark_as('reject', '{{ owner.id }}')"
+                    class="btn btn-light btn-icon-left mb-2 mb-sm-0 font-size-md">
+                    <i class="fal fa-times"></i>
+                    Reject
+                </a>
+
+                <a onclick="mark_as('approv', '{{ owner.id }}')"
+                    class="btn btn-primary btn-icon-left mb-2 mb-sm-0 px-5 font-size-md text-white">
+                    <i class="fal fa-check"></i>
+                    Approve
+                </a>
+
+            {% elif owner.status == 1 %}
+
+                <a  onclick="mark_as('reject', '{{ owner.id }}')"
+                    class="btn btn-light btn-icon-left mb-2 mb-sm-0 font-size-md">
+                    <i class="fal fa-times"></i>
+                    Reject
+                </a>
+
+            {% elif owner.status == -1  %}
+
+                <a  onclick="mark_as('approv', '{{ owner.id }}')"
+                    class="btn btn-primary btn-icon-left mb-2 mb-sm-0 px-5 font-size-md text-white">
+                    <i class="fal fa-check"></i>
+                    Approve
+                </a>
+
+            {% endif %}
+
+
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    function mark_as(type, id) {
+        $.ajax({
+            url: "{% url 'mark_as' %}",
+            type: "GET",
+            data: {
+                type: type,
+                id: id
+            },
+            success: (response)=>{
+                if (response.status == true) {
+                    alert("Owner has been marked as "+type+"ed");
+                    location.reload();
+                }else{
+                    alert("Something went wrong!");
+                }
+            }
+        });
+    }
+
+</script>

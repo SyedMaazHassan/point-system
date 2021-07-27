@@ -1,0 +1,95 @@
+{% extends 'inc/base.html' %}
+{% load static %}
+{% block classpanel %} panel my-profile{% endblock classpanel %}
+{% block content %}
+
+<div id="wrapper-content" class="wrapper-content pt-0 pb-0">
+    <div class="page-wrapper d-flex flex-wrap flex-xl-nowrap">
+        
+        {% include 'user_panel/inc/modals.inc.html' %}
+        {% include 'user_panel/inc/profile-side-panel.inc.html' %}
+
+      
+
+        <div class="page-container">
+            <div class="container-fluid">
+                <div class="page-content-wrapper d-flex flex-column">
+                    <h2 class="mb-5 text-secondary">Notifications</h2>
+
+                    
+                    <div class="row">
+
+                        <div class="p-3 mx-3 bg-white" style="width: 100%; border-radius: 10px; border: solid 1px rgb(179, 179, 179);">
+
+
+                            
+                            {% if all_notifications %}
+
+                                {% for notification in all_notifications %}
+
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="wit-comment-viewer {% if notification.is_read %}read{% else %}unread{% endif %}-notification">
+                                                <div class="row">
+                                                    <div class="col-sm-7 d-flex align-items-center">
+                                                        <!-- <img src="{{ notification }}" alt=""> -->
+                                                        {{ notification.get_icon | safe }}
+                                                        <h5 class="title-card my-0">
+                                                            {{ notification.title }}
+                                                        </h5>
+                                                        {% if not notification.is_read %}
+                                                            <span class="bg-primary radius-100 text-white  mx-2" style="padding: 0px 8px; font-size: 12px;">New</span>
+                                                        {% endif %}
+                                                    </div>
+                
+                                                    <div class="col-sm-5 d-flex justify-content-end">
+                                                        <div class="color-primary text-center px-3" style="width: fit-content; border-radius:100px; background-color: rgb(150, 150, 150); color: white; border: solid 1px grey;">
+                                                            {{ notification.timestamp }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                
+                                                <div class="mt-2">
+                                                    {{ notification.content | safe }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                {% endfor %}
+                              
+                            {% else %}
+
+                              <div class="text-center mt-5">
+                                  <div class="alert alert-primary" role="alert">
+                                    <h3 class="my-0">No any notification yet!</h3>
+                                </div>
+                              </div>
+
+                            {% endif %}
+
+                        </div>
+
+                       
+                        
+
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+ 
+</script>
+
+
+{% endblock content %}
+
+

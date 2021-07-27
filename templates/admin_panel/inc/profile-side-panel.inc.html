@@ -1,0 +1,200 @@
+{% load static %}
+
+<div class="modal fade" id="add-points" tabindex="-1"  style="z-index: 10000;"  role="dialog" aria-labelledby="add-points-label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="add-pointsTitle">Add points in ADMIN account</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{% url 'add-admin-points' %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body text-center">
+                    <!--Modal content-->
+                    <input type="hidden" name="redirect_url" value="{{ redirect_url }}" required>
+                    <input 
+                        id="new_points"
+                        class="form-control px-5" 
+                        type="number"
+                        placeholder="Enter"
+                        name="new_points" 
+                        step="0.01"
+                        min="1"
+                        style="font-size: 50px; width: 60%; margin: auto; text-align: center;" 
+                        type="text"
+                        required>
+                    <small class="text-dark" style="font-size: 15px;" id="educate_add_admin_points"></small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </form>
+            
+        </div>
+    </div>
+</div>
+
+
+<div class="sidebar">
+    <div class="container-fluid">
+        <div class="user-profile media align-items-center mb-6 py-3" style="border: solid 1px #cccccc;">
+            <div class="text-center" style="width: 100%;">
+
+                <div class="image text-center mt-2" style="width: 100%;  margin: auto;">
+                    <img src="{% static 'images/my-profile-icon.png' %}" style="margin: auto;" alt="User image"
+                                            class="rounded-circle">
+                </div>
+                
+                <div class="media-body lh-14 mt-3">
+                    <span class="mb-0 h5">{{ user.username }}</span>
+                    <span class="text-dark d-block font-size-md">Admin</span>
+                </div>
+
+                <hr>
+
+                <div class="my-3">
+                    Total point balance
+                    <h1 class="my-3 admin_total_balance">{{ admin_account_info.total_balance }}</h1>
+                </div>
+             
+
+                <div class="px-4 my-2">
+                    <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#add-points">Add points</button>
+                    
+                    {% for message in messages %}
+                        <div class="alert alert-success my-3 alert-dismissible fade show d-flex align-items-center p-2">
+                            <div class="font-size-sm py-0 text-left">
+                                {{ message }}
+                            </div>
+                            <div class="ml-auto">
+                                <a href="#" class="alert-button py-0 lh-1" data-dismiss="alert"
+                                aria-label="Close"><i class="fal fa-times"></i></a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+        <ul class="list-group list-group-flush list-group-borderless">
+            <li class="list-group-item p-0 mb-2 lh-15" id="dashboard-link">
+                <a href="{% url 'index' %}"
+                   class="d-flex align-items-center link-hover-dark-primary font-size-md">
+                    <span class="d-inline-block mr-3"><i class="fal fa-laptop"></i></span>
+                    <span>Dashboarsd</span>
+                </a>
+            </li>
+
+            <li class="list-group-item p-0 mb-2 lh-15">
+                <a href="{% url 'owners' %}"
+                   class="d-flex align-items-center link-hover-dark-primary font-size-md">
+                    <span class="d-inline-block mr-3"><i class="fal fa-list"></i></span>
+                    <span>Owners & requests</span>
+                </a>
+            </li>
+
+            <li class="list-group-item p-0 mb-2 lh-15">
+                <a href="{% url 'overall-business' %}"
+                   class="d-flex align-items-center link-hover-dark-primary font-size-md">
+                    <span class="d-inline-block mr-3"><i class="fal fa-store"></i></span>
+                    <span>All business</span>
+                </a>
+            </li>
+
+            <li class="list-group-item p-0 mb-2 lh-15">
+                <a href="{% url 'buyers' %}"
+                   class="d-flex align-items-center link-hover-dark-primary font-size-md">
+                    <span class="d-inline-block mr-3"><i class="fal fa-user"></i></span>
+                    <span>All buyers</span>
+                </a>
+            </li>
+
+
+   
+      
+     
+            
+            <!-- <li class="list-group-item p-0 mb-2 lh-15">
+                <a href="panel-package.html"
+                   class="d-flex align-items-center link-hover-dark-primary font-size-md">
+                    <span class="d-inline-block mr-3"><i class="fal fa-gift"></i></span>
+                    <span>Packages</span>
+                </a>
+            </li>
+            <li class="list-group-item p-0 mb-2 lh-15">
+                <a href="#adcampaign"
+                   class="d-flex align-items-center link-hover-dark-primary font-size-md"
+                   data-toggle="collapse"
+                   aria-expanded="false">
+                    <span class="d-inline-block mr-3"><i class="far fa-bullhorn"></i></span>
+                    <span>Ad Campaigns</span>
+                    <span class=" ml-auto"><i class="fal fa-chevron-down"></i></span>
+                </a>
+                <ul class="submenu collapse list-group list-group-flush list-group-borderless pt-2 mb-0 sidebar-menu"
+                    id="adcampaign">
+                    <li class="list-group-item p-0 mb-2 lh-15"><a
+                            href="panel-ad-campaigns-active.html"
+                            class="link-hover-dark-primary font-size-md">Ad
+                        Campaigns Active</a></li>
+                    <li class="list-group-item p-0 mb-2 lh-15"><a
+                            href="panel-ad-campaigns-start-new.html"
+                            class="link-hover-dark-primary font-size-md">Ad
+                        Campaigns Start new</a></li>
+                </ul>
+            </li>
+            <li class="list-group-item p-0 mb-2 lh-15">
+                <a href="#review" class="d-flex align-items-center link-hover-dark-primary font-size-md"
+                   data-toggle="collapse"
+                   aria-expanded="false">
+                    <span class="d-inline-block mr-3"><i class="fal fa-star"></i></span>
+                    <span>Reviews</span>
+                    <span class=" ml-auto"> <i class="fal fa-chevron-down"></i></span>
+                </a>
+                <ul class="submenu collapse list-group list-group-flush list-group-borderless pt-2 mb-0 sidebar-menu"
+                    id="review">
+                    <li class="list-group-item p-0 mb-2 lh-15"><a href="panel-review-received.html"
+                                                                  class="link-hover-dark-primary font-size-md">Review
+                        received</a></li>
+                    <li class="list-group-item p-0 mb-2 lh-15"><a href="panel-review-submitted.html"
+                                                                  class="link-hover-dark-primary font-size-md">Review
+                        submitted</a></li>
+                </ul>
+            </li>
+            <li class="list-group-item p-0 mb-2 lh-15">
+                <a href="panel-my-profile.html"
+                   class="d-flex align-items-center link-hover-dark-primary font-size-md">
+                    <span class="d-inline-block mr-3"><svg class="icon icon-user"><use
+                            xlink:href="#icon-user"></use></svg></span>
+                    <span>My Profile</span>
+                </a>
+            </li> -->
+            <li class="list-group-item p-0 mb-2 lh-15">
+                <a href="{% url 'logout' %}" class="d-flex align-items-center link-hover-dark-primary font-size-md">
+                    <span class="d-inline-block mr-3">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </span>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+
+<script>
+    let previous_points = parseFloat("{{ admin_account_info.total_balance }}");
+    $("#new_points").on("keyup", function () {
+       let value = parseFloat(this.value);
+       if (value && value > 0) {
+           let sentence = `New balance will be ${previous_points} + ${value} = ${ previous_points + value }`;
+           $("#educate_add_admin_points").text(sentence);
+           $("#educate_add_admin_points").show()
+       }else{
+            $("#educate_add_admin_points").hide()
+       }
+    });
+</script>

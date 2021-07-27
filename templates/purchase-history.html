@@ -1,0 +1,289 @@
+{% extends 'inc/base.html' %}
+{% load static %}
+{% block classpanel %} panel my-profile{% endblock classpanel %}
+{% block content %}
+
+<div id="wrapper-content" class="wrapper-content pt-0 pb-0">
+    <div class="page-wrapper d-flex flex-wrap flex-xl-nowrap">
+        
+        {% include 'user_panel/inc/modals.inc.html' %}
+        {% include 'user_panel/inc/profile-side-panel.inc.html' %}
+
+        
+
+        <div class="modal fade" id="viewReceipt" style="z-index: 10000;" tabindex="-1" role="dialog" aria-labelledby="viewReceipt-label" aria-hidden="true">
+            <div class="modal-dialog" style="max-width: 600px;" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="viewReceiptTitle">Receipt</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <!--Modal content-->
+                        
+
+
+                        <div class="card my-3 border-primary" style="border-radius: 10px; border: solid 2px rgb(189, 189, 189);">
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-sm-9">
+    
+                                        <h5 class="text-secondary mb-1">{{ business.title_name }}</h5>
+                                        <p class="mb-0">{{ business.written_address }}</p>                                    
+                                        <p class="my-0" style="font-weight: 500"><u>Receipt # &nbsp;<span id="receipt_holder"></span></u></p>
+                                    </div>
+    
+                                    <div class="col-sm-3 text-right">
+                                        <p class="card-text my-0" id="time_holder"></p>
+                                        <p class="card-text my-0" id="date_holder"></p>
+    
+                                    </div>
+                                </div>
+    
+                                <div class="row">
+                                    <div class="col-sm-7">
+                                        <h6 class="card-subtitle mb-1 mt-3 text-secondary" style="font-size: 18px;">Customer</h6>
+                                        <p class="card-text" id="customer_holder"></p>
+                                    </div>
+    
+                                    <div class="col-sm-5 text-right">
+                                        <div class="d-flex justify-content-end">
+                                            <span class="mt-3 mr-2">cost = $</span><p style="font-size: 40px;" class="my-0 py-0" class="price_holder" id="price_holder"></p>
+                                        </div>
+                                    </div>
+                                </div>   
+
+                                <div class="row my-3">
+                                    <div class="col-sm-6">
+                                        
+                                        <div style="border-radius: 10px; border: solid 1px rgb(189, 189, 189);">
+                                            <table class="table table-hover mb-0">
+                                                <tbody>
+                                                  <tr>
+                                                    <td class="pl-2"><i>Membership level</i></td>
+                                                    <td><b><span id="membership_level_holder"></span></b></td>
+                                                  </tr>
+                                                  <tr>
+                                                    <td class="pl-2"><i>Reward points</i></td>
+                                                    <td><b><span id="reward_points_holder"></span></b></td>
+                                                  </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+    
+                                    </div>
+    
+                                    <div class="col-sm-6">
+                                        <div>
+                                            <div style="border-radius: 10px; border: solid 1px rgb(189, 189, 189);">
+                                                <table class="table table-hover mb-0">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="pl-2"><i>Via money</i></td>
+                                                            <td><b><span id="via_money_holder"></span></b></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="pl-2"><i>Via points</i></td>
+                                                            <td><b><span id="via_points_holder"></span></b></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="pl-2"><i>Total</i></td>
+                                                            <td><b><span class="price_holder"></span></b></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+    
+                                    </div>
+                                </div>
+                                
+                                <hr class="my-2">
+    
+                                <div class="row" style="font-size: 12px;">
+                                    <div class="col-sm-6">
+                                        Contact us: {{ business.phone_number }} <br> {{ business.website_link }}
+                                    </div>
+    
+                                    <div class="col-sm-6 text-right">
+                                    
+                                        <p class="my-0">Thanks for your purchase!</p>
+                                        <p class="my-0">Transaction added by <b id="added_by_holder"></b></p>
+                                        
+                                    </div>
+    
+                                </div>
+    
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-container">
+            <div class="container-fluid">
+                <div class="page-content-wrapper d-flex flex-column">
+                    <div class="row mb-2">
+                        <div class="col-sm-9">
+                            <h2 class="mb-3 text-secondary">Purchase history</h2>
+                        </div>
+
+                        <div class="col-sm-3 float-right">
+                            <div class="header-customize-item text-right">
+                                <div class="form-group mb-0">
+                                    <select class="custom-select" id="business-dropdown">
+                                        <option value="">Select Business</option>
+                                        {% for business in all_businesses %}
+                                            <option value="{{ business.id }}">{{ business.title_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <!-- <a class="btn btn-primary btn-icon-right text-white" href="{% url 'addListing' %}">
+                                    Add Transaction <i class="far fa-angle-right"></i>
+                                </a> -->
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="row">
+
+                        <div class="p-3 mx-3 bg-white" style="width: 100%; border-radius: 10px; border: solid 1px rgb(179, 179, 179);">
+
+                            {% if request.GET.selected_business %}
+
+                                {% if business %}
+                                <a href="business/{{ business.link_name }}" class="card-title h4 text-dark d-inline-block">
+                                    <span class="letter-spacing-25">{{ business.title_name }}</span>
+                                </a>
+
+                                {% endif %}
+
+                                <hr class="mb-0">
+
+                                {% if all_transactions %}
+                                    <table class="table table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>S no.</th>
+                                            
+                                            <th style="{% if user_status == 'user' %}display: none;{% endif %}">Customer</th>
+                                            
+                                            <th>Receipt #</th>
+                                            <th>Price</th>
+                                            <th>Added by</th>
+                                            <th style="{% if user_status != 'user' %}display: none;{% endif %}">Points spend</th>
+                                            <th style="{% if user_status != 'user' %}display: none;{% endif %}">Points get</th>
+                                            <th></th>
+
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for transaction in all_transactions %}
+                                                <tr>
+                                                    <td class="pl-3">{{ forloop.counter }}</td>
+                                                    <td style="{% if user_status == 'user' %}display: none;{% endif %}" id="customer_{{ transaction.id }}">{{ transaction.customer.user_first_name }} {{ transaction.customer.user_last_name }}</td>
+                                                    <td id="receipt_{{ transaction.id }}">{{ transaction.receipt }}</td>
+                                                    <td>$ <span id="price_{{ transaction.id }}">{{ transaction.price }}</span></td>
+                                                    <td id="added_by_{{ transaction.id }}">{{ transaction.added_by.first_name }} {{ transaction.added_by.last_name }}</td>
+                                                    <td style="{% if user_status != 'user' %}display: none;{% endif %}"><span class="fal fa-arrow-down" style="color: rgb(255, 117, 117); font-weight: bold;"></span> &nbsp; {{ transaction.via_points }}</td>
+                                                    <td style="{% if user_status != 'user' %}display: none;{% endif %}"><span class="fal fa-arrow-up text-success" style="font-weight: bold;"></span> &nbsp; {{ transaction.get_reward_points }}</td>
+                                                    <td>
+                                                        <span class="material-icons mk-pointer" onclick="view_receipt('{{ transaction.id }}', '{{ transaction.timestamp.date }}', '{{ transaction.timestamp.time }}', '{{ transaction.current_membership_level }}', '{{transaction.via_money}}', '{{transaction.via_points}}', '{{transaction.get_reward_points}}')" title="See the receipt">
+                                                            receipt_long
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% endif %}
+
+                                {% if message %}
+                                    <div class="text-center mt-5">
+                                        <div class="alert alert-primary" role="alert">
+                                            <h3 class="my-0">{{ message }}</h3>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                              
+                            {% else %}
+
+                              <div class="text-center mt-5">
+                                  <div class="alert alert-primary" role="alert">
+                                    <h3 class="my-0">Select business to show the transactions</h3>
+                                </div>
+                              </div>
+
+                            {% endif %}
+
+                        </div>
+
+                       
+                        
+
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+    let already_input = "{{ request.GET.selected_business }}";
+    if (already_input) {
+        $(`#business-dropdown option[value="${already_input}"]`).prop('selected', true)
+    }
+
+
+    $("#business-dropdown").on("change", function () {
+        let selected_business = $(this).val();
+        if (selected_business) {
+            let new_location = "{% url 'purchase-history' %}" + `?selected_business=${selected_business}`;
+            location.href = new_location; 
+        }
+    });
+
+
+    function view_receipt(id, date, time, membership_level, via_money, via_points, reward_points) {
+        let list = ["customer", "receipt", "price", "added_by"];
+        for (let i = 0; i < list.length; i++) {
+            let index = list[i];
+            let value = $(`#${index}_${id}`).text();
+
+            if (index == "price") {
+                $(".price_holder").text(value);
+            }
+
+            $(`#${index}_holder`).text(value);
+        }
+        $("#date_holder").text(date);
+        $("#time_holder").text(time);                                    
+        $("#membership_level_holder").text(membership_level);
+        $("#via_money_holder").text(via_money);
+        $("#via_points_holder").text(via_points);
+
+        $("#reward_points_holder").text(reward_points);
+       
+        $("#viewReceipt").modal("show");
+    }
+
+
+</script>
+
+
+{% endblock content %}
+
+

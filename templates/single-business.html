@@ -1,0 +1,1872 @@
+{% extends 'inc/base.html' %}
+{% load static %}
+{% block classpanel %} explore-details explore-details-full-image bg-gray-06{% endblock classpanel %}
+{% block content %}
+
+<div id="mySidenav" class="sidenav">
+    <div class="p-4" id="main-container">
+        <div class="row">
+            <div class="col-sm-7 d-flex align-items-center">
+                <h4 class="my-0">Add new Transaction</h4>
+            </div>
+
+            <div class="col-sm-5 d-flex align-items-center justify-content-end">
+                <i 
+                    onclick="closeNav()"
+                    class="material-icons myIco ml-2 text-secondary" 
+                    title="Add new translation">
+                    close
+                </i>
+            </div>
+        </div>
+
+
+        <div class="row mt-3">
+            <div class="col-sm-12">
+                <form>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Selected business</label>
+                        <div class="form-control">
+                            <b>{{ business.title_name }}</b>
+                        </div>
+                        <input type="hidden" value="{{ business.id }}">
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Price</label>
+                                <input type="number" min="1" class="form-control" v-model="price" required>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Receipt #</label>
+                                <input type="text" class="form-control" v-model="receipt" required>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label>Customer ID</label>
+                                <input type="number" v-model="customer_id" @keyup="get_customer_name()" class="form-control" required>
+                                <p class="text-danger" v-if="customer_name_error">Invalid ID</p>
+                            </div>
+                        </div>
+
+                        
+
+                        <div class="col-sm-12 pt-2" v-if="customer_name">
+                            <div class="form-group">
+                                <h4>Payment</h4>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4" v-if="customer_name">
+                            <div class="form-group">
+                                <label>via money</label>
+                                <input type="number" min="1" class="form-control" @keyup="check_calculation()" v-model="payment.via_money" required>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4" v-if="customer_name">
+                            <div class="form-group">
+                                <label>via points</label>
+                                <input type="number" min="1" class="form-control" @keyup="check_calculation()" v-model="payment.via_points" required>
+                                <small>Available points: <b>${ available_points }</b></small>
+                                <p class="my-0 mt-2"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="payment.payment_msg" v-html="payment.payment_msg" class="alert alert-warning" role="alert">
+                        
+                    </div>
+
+                    <h4 class="my-2">Receipt view</h4>
+
+
+                    <div class="card my-3" style="border-radius: 10px; border: solid 1px rgb(189, 189, 189);">
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-sm-9">
+
+                                    <h5 class="text-secondary mb-1">{{ business.title_name }}</h5>
+                                    <p class="mb-0">{{ business.written_address }}</p>                                    
+                                    <p class="my-0" v-if="receipt" style="font-weight: 500"><u>Receipt # &nbsp;<span>${ receipt }</span></u></p>
+                                </div>
+
+                                <div class="col-sm-3 text-right">
+                                    <p class="card-text my-0">{{ timestamp.time }}</p>
+                                    <p class="card-text my-0">{{ timestamp.date }}</p>
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-7">
+                                    <h6 class="card-subtitle mb-1 mt-3 text-secondary" style="font-size: 18px;">Customer</h6>
+                                    <p class="card-text" v-if="customer_name">${ customer_name }</p>
+
+
+                                </div>
+
+                                <div class="col-sm-5 text-right">
+                                    <div class="d-flex justify-content-end">
+                                        <span class="mt-3 mr-2">Cost =&nbsp;$</span><p style="font-size: 40px;" v-if="price < 1000000000" class="my-0 py-0">${ price }</p>
+                                    </div>
+
+                                   
+
+                                    
+                                </div>
+
+                            </div>   
+
+                            <div class="row my-3" v-if="customer_name">
+                                <div class="col-sm-6">
+                                    
+                                    <div style="border-radius: 10px; border: solid 1px rgb(189, 189, 189);">
+                                        <table class="table table-hover mb-0">
+                                            <tbody>
+                                              <tr>
+                                                <td><i>Membership level</i></td>
+                                                <td><b>${ membership_level }</b></td>
+                                              </tr>
+                                              <tr>
+                                                <td><i>Reward points</i></td>
+                                                <td><b>${ reward_points }</b></td>
+                                              </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div>
+                                        <div style="border-radius: 10px; border: solid 1px rgb(189, 189, 189);">
+                                            <table class="table table-hover mb-0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td><i>Via money</i></td>
+                                                        <td><b>${ payment.via_money }</b></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><i>Via points</i></td>
+                                                        <td><b>${ payment.via_points }</b></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><i>Total</i></td>
+                                                        <td><b>${ price }</b></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            
+                            <hr class="my-2">
+
+                            <div class="row" style="font-size: 12px;">
+                                <div class="col-sm-6">
+                                    Contact us: {{ business.phone_number }} <br> {{ business.website_link }}
+                                </div>
+
+                                <div class="col-sm-6 text-right">
+                                
+                                    <p class="my-0">Thanks for your purchase!</p>
+                                    <p class="my-0">Transaction added by <b>{{ user.first_name }} {{ user.last_name }}</b></p>
+                                    
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-8">    
+                            
+                            
+
+                            <p class="text-danger my-0" v-if="custom_error">${ custom_error }!</p>
+                            <p class="text-danger my-0" v-if="my_error">Please fill the form before submitting!</p>
+                            <p class="text-success my-0" v-if="success">Transaction has been added successfully!</p>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="text-right">
+                                <button type="button" @click="add_new_transaction()" class="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                </form>
+            </div>
+        </div>
+       
+
+    </div>
+
+</div>
+
+
+
+<div id="wrapper-content" class="wrapper-content pb-0 pt-0 ">
+    <div class="image single-business-"  style="
+    height: 480px; 
+    background-size: cover;
+    background-position: center; 
+    background-image: url('/media/{{ business.banner_image }}');">
+    </div>
+    <div class="page-wrapper bg-white bg-info">
+        <div class="container">
+            <div class="page-title pt-7 pb-8 border-bottom" style="margin-top: -100px;">
+                <!-- <ul class="breadcrumb breadcrumb-style-03 mb-4">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Shopping </a></li>
+                    <li class="breadcrumb-item">Azzaro Men’s Clothing</li>
+                </ul> -->
+                <div class="explore-details-top d-flex flex-wrap flex-lg-nowrap bg-white">
+                    <div class="store">
+                        <div class="d-flex flex-wrap">
+                            <h2 class="text-dark mr-3 mb-2">
+                                {{ business.title_name }}
+                            </h2>
+                            <span class="check font-weight-semibold text-green mb-2">
+                                <svg class="icon icon-check-circle"><use xlink:href="#icon-check-circle"></use></svg>
+                                Verified
+                        </span>
+                        </div>
+                        <ul class="list-inline store-meta d-flex flex-wrap align-items-center">
+                            <li class="list-inline-item"><span
+                                    class="badge badge-success d-inline-block mr-1">5.0</span>
+                                <span>4 rating</span>
+                            </li>
+                            <li class="list-inline-item separate"></li>
+                            <li class="list-inline-item">
+                                <a 
+                                   class=" text-link text-decoration-none d-flex align-items-center">
+                            <span class="d-inline-block mr-2 font-size-md">
+                                <!-- <svg class="icon icon-bed">
+                                <use xlink:href="#icon-bed"></use>
+                            </svg> -->
+                            </span>
+                                {% for category in business.get_categories %}
+                                    <span class="mylabel mr-2 to-select-label category">{{ category.name }}</span>
+                                {% endfor %}
+                                </a>
+                            </li>
+                            <li class="list-inline-item separate"></li>
+                            <!-- <li class="list-inline-item">
+                                <span class="mr-1"><i class="fal fa-clock"></i></span>
+                                <span>Posted 15 hours ago</span>
+                            </li> -->
+                        </ul>
+                    </div>
+                    <div class="ml-0 ml-lg-auto mt-4 mt-lg-0 d-flex flex-wrap flex-sm-nowrap">
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item">
+                                <a href="#"
+                                   class="btn btn-white font-size-md mb-3 mb-sm-0 py-1 px-2 rounded-sm">
+                        <span class="d-inline-block mr-1">
+                        <i class="fal fa-exclamation-triangle"></i>
+                        </span>
+                                    Report</a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="#"
+                                   class="btn btn-white font-size-md mb-3 mb-sm-0 py-1 px-3 rounded-sm">
+                        <span class="d-inline-block mr-1">
+                        <i class="fal fa-share-alt"></i>
+                        </span>
+                                    Share</a>
+                            </li>
+                            {% if business.super_owner.user == user %}
+                            <li class="list-inline-item">
+                                <div class="header-customize-item text-right">
+                                    <button onclick="openNav()" class="btn btn-primary btn-icon-right text-white">
+                                        Add Transaction <i class="far fa-angle-right"></i>
+                                    </button>
+                                </div>
+                            </li>
+                            {% endif %}
+                            
+                           
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="page-container row bg-white pt-8 pb-9">
+                <div class="page-content col-xl-8 mb-8 mb-xl-0 pt-1">
+                    <div class="explore-details-container">
+                        <div class="mb-9">
+                            <h5 class="font-size-lg text-uppercase pb-2 mb-6">
+                                description
+                            </h5>
+                            <!-- <h6 class="font-size-md mb-4">Introduce</h6> -->
+                            <div class="mb-7">
+                                <p class="mb-6">
+                                    {{ business.description }}
+                                </p>
+                            </div>
+                            <h6 class="font-size-md mb-4">
+                                Features
+                            </h6>
+                            <div>
+                                {% for feature in business.get_features %}
+                                    <span class="mylabel mr-2 to-select-label category">{{ feature.name }}</span>    
+                                {% endfor %}
+                                <!-- <div class="col-md-4 mb-4 mb-md-0">
+                                    <ul class="list-group list-group-flush list-group-borderless">
+                                        <li class="list-group-item px-0 bg-transparent py-0 lh-19">
+                                            <span class="d-inline-block mr-2 font-size-md">
+                                                <i class="fal fa-credit-card"></i>
+                                            </span>
+                                            <span class="text-dark">
+                                                    Accept Credit Cards
+                                            </span>
+                                        </li>
+                                        <li class="list-group-item px-0 bg-transparent py-0 lh-19">
+                                            <span class="d-inline-block mr-2 font-size-md">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            </span>
+                                            <span class="text-dark">
+                                                Free Shipping
+                                            </span>
+                                        </li>
+                                        <li class="list-group-item px-0 bg-transparent py-0 lh-19">
+                                            <span class="d-inline-block mr-2 font-size-md">
+                                            <i class="fal fa-tshirt"></i>
+                                            </span>
+                                            <span class="text-dark">
+                                            Men’s Clothings
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-4 mb-4 mb-md-0">
+                                   
+
+                                    <ul class="list-group list-group-flush list-group-borderless">
+                                        <li class="list-group-item px-0 bg-transparent py-0 lh-19">
+                                            <span class="d-inline-block mr-2 font-size-md">
+                                            <svg class="icon icon-watch">
+                                                    <use xlink:href="#icon-watch"></use>
+                                                </svg>
+                                            </span>
+                                            <span class="text-dark">
+                                            Accessories
+                                            </span>
+                                        </li>
+
+                                        <li class="list-group-item px-0 bg-transparent py-0 lh-19">
+                                            <span class="d-inline-block mr-2 font-size-md">
+                                            <i class="fas fa-wifi"></i>
+                                            </span>
+                                            <span class="text-dark">
+                                            Wireless/Internet
+                                            </span>
+                                        </li>
+                                        <li class="list-group-item px-0 bg-transparent py-0 lh-1">
+                                            <span class="d-inline-block mr-2 font-size-h5">
+                                            <svg class="icon icon-ionicons_svg_logo-model-s">
+                                                <use xlink:href="#icon-ionicons_svg_logo-model-s"></use>
+                                            </svg>
+                                            </span>
+                                            <span class="text-dark">
+                                            Car Parking
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-4 mb-4 mb-md-0">
+                                    <ul class="list-group list-group-flush list-group-borderless">
+                                        <li class="list-group-item px-0 bg-transparent py-0 lh-19">
+                                            <span class="d-inline-block mr-2 font-size-md">
+                                            <svg class="icon icon-ionicons_svg_md-sync">
+                                                    <use xlink:href="#icon-ionicons_svg_md-sync"></use>
+                                                </svg>
+                                            </span>
+                                            <span class="text-dark">
+                                            Return Product
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="block-review">
+                            <h5 class="font-size-lg text-uppercase border-bottom pb-1 mb-6">
+                                Reviews & Ratings
+                            </h5>
+                            <h6 class="font-size-md mb-1">02 Reviews for Thai’s Taste Restaurant</h6>
+                            <div class="reviews">
+                                <div class="py-6 media border-top">
+                                    <a href="#" class="author-image">
+                                        <img src="images/listing/jobs-testimonial-1.png"
+                                             alt="Author 1" class="rounded-circle">
+                                    </a>
+                                    <div class="media-body">
+                                        <div class="mb-4 row flex-md-nowrap mb-5">
+                                            <div class="col-12 col-md-10">
+                                                <div class="h5 mb-1">Great place and very love it!
+                                                </div>
+                                                <ul class="list-inline text-gray">
+                                                    <li class="list-inline-item">
+                                                        <span>by</span>
+                                                        <a href="#">Ron Weasley</a>
+                                                    </li>
+                                                    <li class="list-inline-item">
+                                                        <span>|</span>
+                                                    </li>
+                                                    <li class="list-inline-item">
+                                                        <span>15 hours ago</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="ml-0 ml-md-auto text-left text-md-right col-12 col-md-2 mt-2 mt-md-0">
+                                                <span class="badge badge-success d-inline-block font-size-h5 font-weight-semibold">5.0</span>
+                                                <span class="text-dark font-weight-semibold font-size-md d-block">Excellent</span>
+                                            </div>
+                                        </div>
+
+                                        <p class="mb-0">This place is the epitome of an amazing
+                                            college
+                                            town diner! Badger decor, huge portions, completely
+                                            affordable,
+                                            hearty meals and awesome service!
+                                        </p>
+                                        <div class="images d-flex flex-wrap">
+                                            <img src="images/listing/review-04.jpg" alt="Review 1"
+                                                 class="mt-4">
+                                            <img src="images/listing/review-05.jpg" alt="Review 2"
+                                                 class="mt-4">
+                                            <img src="images/listing/review-06.jpg" alt="Review 3"
+                                                 class="mt-4">
+                                        </div>
+                                        <div class="icons d-flex mt-4">
+                                            <div class="mr-5 like">
+                                                <i class="fal fa-thumbs-up"></i>
+                                                12
+                                            </div>
+                                            <div class="love">
+                                                <i class="fal fa-heart"></i>
+                                                8
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="py-6 media border-top">
+                                    <a href="#" class="author-image">
+                                        <img src="images/listing/review-athor-01.jpg"
+                                             alt="Author 2" class="rounded-circle">
+                                    </a>
+                                    <div class="media-body">
+                                        <div class="mb-4 row flex-md-nowrap mb-5">
+                                            <div class="col-12 col-md-10">
+                                                <div class="h5 mb-1">Delicious & Fast Support</div>
+                                                <ul class="list-inline d-flex text-gray">
+                                                    <li class="list-inline-item">
+                                                        <span>by</span>
+                                                        <a href="#">Anna Molly </a>
+                                                    </li>
+                                                    <li class="list-inline-item">
+                                                        <span>|</span>
+                                                    </li>
+                                                    <li class="list-inline-item">
+                                                        <span>17 hours ago</span>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="rating ml-0 ml-md-auto text-left text-md-right col-12 col-md-2 mt-2 mt-md-0">
+                                                <span class="badge badge-success d-inline-block font-size-h5 font-weight-semibold">5.0</span>
+                                                <span class="text-dark font-weight-semibold font-size-md d-block">Excellent</span>
+                                            </div>
+
+                                        </div>
+
+                                        <p class="mb-0">This place is the epitome of an amazing
+                                            college
+                                            town diner! Badger decor, huge portions, completely
+                                            affordable,
+                                            hearty meals and awesome service! The ambiance is very
+                                            chill
+                                            and
+                                            comfy. Just moved to Thai’s Taste and already went here
+                                            twice (two
+                                            days in a row) because there's really nothing like this
+                                            place. It's
+                                            going to be hard to find another place like this in
+                                            regards
+                                            to
+                                            service, taste, portions & price! My husband and I will
+                                            definitely
+                                            be regulars here!
+                                        </p>
+                                        <div class="icons d-flex mt-4">
+                                            <div class="like mr-5">
+                                                <i class="fal fa-thumbs-up"></i>
+                                                5
+                                            </div>
+                                            <div class="love">
+                                                <i class="fal fa-heart"></i>
+                                                3
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="block-form-review bg-gray-06 px-5 pb-6">
+                            <h6 class="font-size-md pb-1 border-bottom pt-4 mb-4">
+                                Rate Us & Write A Review
+                            </h6>
+                            <form>
+                                <div class="row mb-4 flex-md-nowrap align-items-center">
+                                    <div class="form-group d-flex form-rate col-md-6 align-items-center mb-4 mb-md-0">
+                                        <span class="d-inline-block mr-2">Select your rating</span>
+                                        <div class="rate-input d-flex">
+                                            <input type="radio" id="star5" name="rate" value="5"/>
+                                            <label for="star5" title="text" class="mb-0">
+                                                <svg class="icon icon-ionicons_svg_md-star">
+                                                    <use
+                                                            xlink:href="#icon-ionicons_svg_md-star"></use>
+                                                </svg>
+                                            </label>
+                                            <input type="radio" id="star4" name="rate" value="4" checked/>
+                                            <label for="star4" title="text" class="mb-0">
+                                                <svg class="icon icon-ionicons_svg_md-star">
+                                                    <use
+                                                            xlink:href="#icon-ionicons_svg_md-star"></use>
+                                                </svg>
+                                            </label>
+                                            <input type="radio" id="star3" name="rate" value="3"/>
+                                            <label for="star3" title="text" class="mb-0">
+                                                <svg class="icon icon-ionicons_svg_md-star">
+                                                    <use
+                                                            xlink:href="#icon-ionicons_svg_md-star"></use>
+                                                </svg>
+                                            </label>
+                                            <input type="radio" id="star2" name="rate" value="2"/>
+                                            <label for="star2" title="text" class="mb-0">
+                                                <svg class="icon icon-ionicons_svg_md-star">
+                                                    <use
+                                                            xlink:href="#icon-ionicons_svg_md-star"></use>
+                                                </svg>
+                                            </label>
+                                            <input type="radio" id="star1" name="rate" value="1"/>
+                                            <label for="star1" title="text" class="mb-0">
+                                                <svg class="icon icon-ionicons_svg_md-star">
+                                                    <use
+                                                            xlink:href="#icon-ionicons_svg_md-star"></use>
+                                                </svg>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="upload-file col-md-6 text-left text-md-right"><input type="file"
+                                                                                                     id="file"/><label
+                                            for="file"
+                                            class="btn btn-white btn-icon-left mb-0 px-6"><i
+                                            class="fas fa-cloud-upload"></i>Add a Photo</label>
+                                    </div>
+                                </div>
+                                <div class="form-row mx-0">
+                                    <div class="col-sm-4 form-group mb-4 pl-0 pr-0 pr-sm-3">
+                                        <input class="form-control" placeholder="Name">
+                                    </div>
+                                    <div class="col-sm-4 form-group pl-0 mb-4 pr-0 pr-sm-3">
+                                        <input class="form-control" placeholder="Email Address"
+                                        >
+                                    </div>
+                                    <div class="col-sm-4 form-groupmb-4 px-0">
+                                        <input class="form-control" placeholder="Subject">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <textarea class="form-control"
+                                              placeholder="Write your review here..."></textarea>
+                                </div>
+                                <div class="text-center">
+                                    <button class="btn btn-primary font-size-md btn-lg lh-base">Sign Up & Submit
+                                        Review
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="block-more-listing mt-8 border-top pt-6">
+                            <h6 class="font-size-md mb-5">More Listing By <span
+                                    class="text-danger">Ron Weasley</span></h6>
+                            <div class="slick-slider arrow-top store-grid-style"
+                                 data-slick-options='{"slidesToShow": 2, "autoplay":false,"dots":false,"responsive":[{"breakpoint": 992,"settings": {"slidesToShow": 1}}]}'>
+                                <div class="box">
+                                    <div class="store card rounded-0 border-0">
+                                        <div class="position-relative store-image">
+                                            <a href="listing-details-full-image.html">
+                                                <img src="images/shop/popular-place-1.jpg" alt="store 1"
+                                                     class="card-img-top rounded-0">
+                                            </a>
+                                            <div class="image-content position-absolute d-flex align-items-center">
+                                                <div class="content-right ml-auto d-flex">
+                                                    <a href="images/shop/full-popular-place-1.jpg"
+                                                       class="item viewing"
+                                                       data-toggle="tooltip"
+                                                       data-placement="top"
+                                                       title="Quick view" data-gtf-mfp="true">
+                                                        <svg class="icon icon-expand">
+                                                            <use xlink:href="#icon-expand"></use>
+                                                        </svg>
+                                                    </a>
+                                                    <a href="#" class="item marking" data-toggle="tooltip"
+                                                       data-placement="top"
+                                                       title="Bookmark"><i
+                                                            class="fal fa-bookmark"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body pb-4 border-right border-left">
+                                            <a href="listing-details-full-image.html"
+                                               class="card-title h5 text-dark d-inline-block mb-2"><span
+                                                    class="letter-spacing-25">Japan Rice Mixed Seafood</span></a>
+                                            <ul class="list-inline store-meta mb-4 font-size-sm d-flex align-items-center flex-wrap">
+                                                <li class="list-inline-item"><span
+                                                        class="badge badge-success mr-1 d-inline-block">5.0</span><span
+                                                        class="number">4 rating</span>
+                                                </li>
+                                                <li class="list-inline-item separate"></li>
+                                                <li class="list-inline-item"><span class="mr-1">From</span><span
+                                                        class="text-danger font-weight-semibold">$9.0</span>
+                                                </li>
+                                                <li class="list-inline-item separate"></li>
+                                                <li class="list-inline-item"><span
+                                                        class="text-green">Open now!</span>
+                                                </li>
+                                            </ul>
+                                            <div class="media">
+                                                <a href="#" class="d-inline-block mr-3"><img
+                                                        src="images/listing/testimonial-1.png"
+                                                        alt="testimonial" class="rounded-circle">
+                                                </a>
+                                                <div class="media-body lh-14 font-size-sm">Overlooking
+                                                    Bloomsbury’s
+                                                    Russell
+                                                    Square and a 2
+                                                    minutes’ walk from the tube station of the same name...
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer rounded-0 border-top-0 pb-3 pt-0 bg-transparent border-left border-right border-bottom">
+                                            <div class="border-top pt-3">
+                                                    <span class="d-inline-block mr-1">
+                                                        <i class="fal fa-map-marker-alt"></i>
+                                                    </span>
+                                                <a href="#"
+                                                   class="text-secondary pr-3 text-decoration-none address">534
+                                                    Salem Rd
+                                                    St,
+                                                    Newark, NY</a>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="store card rounded-0 border-0">
+                                        <div class="position-relative store-image">
+                                            <a href="listing-details-full-image.html">
+                                                <img src="images/shop/popular-place-2.jpg" alt="store 1"
+                                                     class="card-img-top rounded-0">
+                                            </a>
+                                            <div class="image-content position-absolute d-flex align-items-center">
+                                                <div class="content-right ml-auto d-flex">
+                                                    <a href="images/shop/full-popular-place-2.jpg"
+                                                       class="item viewing"
+                                                       data-toggle="tooltip"
+                                                       data-placement="top"
+                                                       title="Quick view" data-gtf-mfp="true">
+                                                        <svg class="icon icon-expand">
+                                                            <use xlink:href="#icon-expand"></use>
+                                                        </svg>
+                                                    </a>
+                                                    <a href="#" class="item marking" data-toggle="tooltip"
+                                                       data-placement="top"
+                                                       title="Bookmark"><i
+                                                            class="fal fa-bookmark"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body pb-4 border-right border-left">
+                                            <a href="listing-details-full-image.html"
+                                               class="card-title h5 text-dark d-inline-block mb-2"><span
+                                                    class="letter-spacing-25">Fruit Cake - Halsey St </span></a>
+                                            <ul class="list-inline store-meta mb-4 font-size-sm d-flex align-items-center flex-wrap">
+                                                <li class="list-inline-item"><span
+                                                        class="badge badge-success mr-1 d-inline-block">4.8</span><span
+                                                        class="number">2 rating</span>
+                                                </li>
+                                                <li class="list-inline-item separate"></li>
+                                                <li class="list-inline-item"><span class="mr-1">From</span><span
+                                                        class="text-danger font-weight-semibold">$4.0</span>
+                                                </li>
+                                                <li class="list-inline-item separate"></li>
+                                                <li class="list-inline-item"><span
+                                                        class="text-green">Open now!</span>
+                                                </li>
+                                            </ul>
+                                            <div class="media">
+                                                <a href="#" class="d-inline-block mr-3"><img
+                                                        src="images/listing/testimonial-1.png"
+                                                        alt="testimonial" class="rounded-circle">
+                                                </a>
+                                                <div class="media-body lh-14 font-size-sm">They specialize in
+                                                    makgeolli
+                                                    at this
+                                                    Korean-style pub in Seorae Village. And they use...
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer rounded-0 border-top-0 pb-3 pt-0 bg-transparent border-left border-right border-bottom">
+                                            <div class="border-top pt-3">
+                                                    <span class="d-inline-block mr-1">
+                                                        <i class="fal fa-map-marker-alt"></i>
+                                                    </span>
+                                                <a href="#"
+                                                   class="text-secondary pr-3 text-decoration-none address">92
+                                                    Halsey St,
+                                                    Brooklyn, NY</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="store card rounded-0 border-0">
+                                        <div class="position-relative store-image">
+                                            <a href="listing-details-full-image.html">
+                                                <img src="images/shop/popular-place-1.jpg" alt="store 1"
+                                                     class="card-img-top rounded-0">
+                                            </a>
+                                            <div class="image-content position-absolute d-flex align-items-center">
+                                                <div class="content-right ml-auto d-flex">
+                                                    <a href="images/shop/full-popular-place-1.jpg"
+                                                       class="item viewing"
+                                                       data-toggle="tooltip"
+                                                       data-placement="top"
+                                                       title="Quick view" data-gtf-mfp="true">
+                                                        <svg class="icon icon-expand">
+                                                            <use xlink:href="#icon-expand"></use>
+                                                        </svg>
+                                                    </a>
+                                                    <a href="#" class="item marking" data-toggle="tooltip"
+                                                       data-placement="top"
+                                                       title="Bookmark"><i
+                                                            class="fal fa-bookmark"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body pb-4 border-right border-left">
+                                            <a href="listing-details-full-image.html"
+                                               class="card-title h5 text-dark d-inline-block mb-2"><span
+                                                    class="letter-spacing-25">Japan Rice Mixed Seafood</span></a>
+                                            <ul class="list-inline store-meta mb-4 font-size-sm d-flex align-items-center flex-wrap">
+                                                <li class="list-inline-item"><span
+                                                        class="badge badge-success mr-1 d-inline-block">5.0</span><span
+                                                        class="number">4 rating</span>
+                                                </li>
+                                                <li class="list-inline-item separate"></li>
+                                                <li class="list-inline-item"><span class="mr-1">From</span><span
+                                                        class="text-danger font-weight-semibold">$9.0</span>
+                                                </li>
+                                                <li class="list-inline-item separate"></li>
+                                                <li class="list-inline-item"><span
+                                                        class="text-green">Open now!</span>
+                                                </li>
+                                            </ul>
+                                            <div class="media">
+                                                <a href="#" class="d-inline-block mr-3"><img
+                                                        src="images/listing/testimonial-1.png"
+                                                        alt="testimonial" class="rounded-circle">
+                                                </a>
+                                                <div class="media-body lh-14 font-size-sm">Overlooking
+                                                    Bloomsbury’s
+                                                    Russell
+                                                    Square and a 2
+                                                    minutes’ walk from the tube station of the same name...
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer rounded-0 border-top-0 pb-3 pt-0 bg-transparent border-left border-right border-bottom">
+                                            <div class="border-top pt-3">
+                                                    <span class="d-inline-block mr-1">
+                                                        <i class="fal fa-map-marker-alt"></i>
+                                                    </span>
+                                                <a href="#"
+                                                   class="text-secondary pr-3 text-decoration-none address">534
+                                                    Salem Rd
+                                                    St,
+                                                    Newark, NY</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box">
+                                    <div class="store card rounded-0 border-0">
+                                        <div class="position-relative store-image">
+                                            <a href="listing-details-full-image.html">
+                                                <img src="images/shop/popular-place-2.jpg" alt="store 1"
+                                                     class="card-img-top rounded-0">
+                                            </a>
+                                            <div class="image-content position-absolute d-flex align-items-center">
+                                                <div class="content-right ml-auto d-flex">
+                                                    <a href="images/shop/full-popular-place-2.jpg"
+                                                       class="item viewing"
+                                                       data-toggle="tooltip"
+                                                       data-placement="top"
+                                                       title="Quick view" data-gtf-mfp="true">
+                                                        <svg class="icon icon-expand">
+                                                            <use xlink:href="#icon-expand"></use>
+                                                        </svg>
+                                                    </a>
+                                                    <a href="#" class="item marking" data-toggle="tooltip"
+                                                       data-placement="top"
+                                                       title="Bookmark"><i
+                                                            class="fal fa-bookmark"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body pb-4 border-right border-left">
+                                            <a href="listing-details-full-image.html"
+                                               class="card-title h5 text-dark d-inline-block mb-2"><span
+                                                    class="letter-spacing-25">Fruit Cake - Halsey St </span></a>
+                                            <ul class="list-inline store-meta mb-4 font-size-sm d-flex align-items-center flex-wrap">
+                                                <li class="list-inline-item"><span
+                                                        class="badge badge-success mr-1 d-inline-block">4.8</span><span
+                                                        class="number">2 rating</span>
+                                                </li>
+                                                <li class="list-inline-item separate"></li>
+                                                <li class="list-inline-item"><span class="mr-1">From</span><span
+                                                        class="text-danger font-weight-semibold">$4.0</span>
+                                                </li>
+                                                <li class="list-inline-item separate"></li>
+                                                <li class="list-inline-item"><span
+                                                        class="text-green">Open now!</span>
+                                                </li>
+                                            </ul>
+                                            <div class="media">
+                                                <a href="#" class="d-inline-block mr-3"><img
+                                                        src="images/listing/testimonial-1.png"
+                                                        alt="testimonial" class="rounded-circle">
+                                                </a>
+                                                <div class="media-body lh-14 font-size-sm">They specialize in
+                                                    makgeolli
+                                                    at this
+                                                    Korean-style pub in Seorae Village. And they use...
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer rounded-0 border-top-0 pb-3 pt-0 bg-transparent border-left border-right border-bottom">
+                                            <div class="border-top pt-3">
+                                                    <span class="d-inline-block mr-1">
+                                                        <i class="fal fa-map-marker-alt"></i>
+                                                    </span>
+                                                <a href="#"
+                                                   class="text-secondary pr-3 text-decoration-none address">534
+                                                    Salem Rd
+                                                    St,
+                                                    Newark, NY</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar col-12 col-xl-4 pt-1">
+                    <div class="widget map mb-6 position-relative mb-6 rounded-0">
+                        <div id="googleMap" data-google-map="true" class="small-map"
+                             style="width:100%;height:240px;"></div>
+                        <div class="button-direction position-absolute">
+                            <a href="#" class="btn btn-sm btn-icon-left">
+                                <i class="fas fa-location-arrow"></i>
+                                Get Direction
+                            </a>
+                        </div>
+                        <div class="card p-4 widget border-0 infomation pt-0 bg-gray-06">
+                            <div class="card-body px-0 py-2">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                        <span class="item-icon mr-3 ml-1"><i class="fal fa-map-marker-alt"></i></span>
+                                        <span class="card-text">
+                                            {{ business.written_address }}
+                                        </span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                        <span class="item-icon mr-3">
+                                            <i class="material-icons text-secondary">phone</i>
+                                        </span>
+                                        <span class="card-text">{{ business.phone_number }}</span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                        <span class="item-icon mr-3 ml-1"><i class="fal fa-globe"></i></span>
+                                        <span class="card-text">
+                                            <a href="#">{{ business.website_link }}</a>
+                                        </span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent d-flex text-dark px-0 pt-4">
+                                        <div class="social-icon origin-color si-square text-center">
+                                            <ul class="list-inline">
+                                                <li class="list-inline-item si-facebook">
+                                                    <a target="_blank" title="Facebook" href="#">
+                                                        <i class="fab fa-facebook-f">
+                                                        </i>
+                                                        <span>Facebook</span>
+                                                    </a>
+                                                </li>
+                                                <li class="list-inline-item si-twitter">
+                                                    <a target="_blank" title="Twitter" href="#">
+                                                        <i class="fab fa-twitter">
+                                                        </i>
+                                                        <span>Twitter</span>
+                                                    </a>
+                                                </li>
+                                                <li class="list-inline-item si-google">
+                                                    <a target="_blank" title="Google plus" href="#">
+                                                        <svg class="icon icon-google-plus-symbol">
+                                                            <use xlink:href="#icon-google-plus-symbol"></use>
+                                                        </svg>
+                                                        <span>Google plus</span>
+                                                    </a>
+                                                </li>
+                                                <li class="list-inline-item si-tumblr">
+                                                    <a target="_blank" title="Tumblr" href="#">
+                                                        <i class="fab fa-tumblr"></i>
+                                                        <span>Tumblr</span>
+                                                    </a>
+                                                </li>
+                                                <li class="list-inline-item si-rss">
+                                                    <a target="_blank" title="RSS" href="#">
+                                                        <i class="fas fa-rss"></i>
+                                                        <span>RSS</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card p-4 widget border-0 schedule bg-gray-06 mb-6 rounded-0">
+                        <div class="card-title d-flex mb-0 font-size-md font-weight-semibold text-dark text-uppercase border-bottom pb-2 lh-1">
+                            <span class="text-secondary mr-3"><i class="fal fa-clock"></i></span>
+                            <span> Opening Hours</span>
+                        </div>
+                        <div class="card-body px-0 pb-0">
+                            <div class="d-flex align-items-center mb-2 font-size-md">
+                                <label class="text-dark font-weight-semibold mb-0">Today</label>
+                                <span class="text-green ml-auto">Open Now!</span>
+                            </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item bg-transparent d-flex text-dark px-0 border-top-0">
+                                    <label class="text-dark font-weight-semibold mb-0">Monday</label>
+                                    <span class="text-dark ml-auto">08:00AM - 09:00PM</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                    <label class="text-dark font-weight-semibold mb-0">Tuesday</label>
+                                    <span class="text-dark ml-auto">08:00AM - 09:00PM</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                    <label class="text-dark font-weight-semibold mb-0">Wednesday</label>
+                                    <span class="text-dark ml-auto">08:00AM - 09:00PM</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                    <label class="text-dark font-weight-semibold mb-0">Thursday</label>
+                                    <span class="text-dark ml-auto">08:00AM - 09:00PM</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                    <label class="text-dark font-weight-semibold mb-0">Friday</label>
+                                    <span class="text-dark ml-auto">08:00AM - 09:00PM</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                    <label class="text-dark font-weight-semibold mb-0">Saturday</label>
+                                    <span class="text-dark ml-auto">08:00AM - 09:00PM</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                    <label class="text-dark font-weight-semibold mb-0">Sunday</label>
+                                    <span class="text-dark ml-auto">08:00AM - 09:00PM</span>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card p-4 widget border-0 price-status bg-gray-06 mb-6 rounded-0">
+                        <div class="card-title d-flex mb-0 font-size-md font-weight-semibold text-dark text-uppercase border-bottom pb-2 lh-1">
+                            <span class="text-secondary mr-3">
+                                <svg class="icon icon-dollar-sign">
+                                    <use xlink:href="#icon-dollar-sign"></use>
+                                </svg>
+                            </span>
+                            <span>Price status</span>
+                        </div>
+                        <div class="card-body px-0 pb-0">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                    <label class="font-weight-semibold text-dark mb-0">Status</label>
+                                    <span class="text-green ml-auto">Ultra High End</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                    <label class="font-weight-semibold text-dark mb-0">Price Range</label>
+                                    <span class="text-danger font-weight-semibold font-size-md ml-auto">$10.00 - $55.00</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                    <label class="font-italic mb-0">Own or work here?</label>
+                                    <a href="#claim-popup"
+                                       class="font-weight-semibold font-size-md ml-auto text-decoration-none"
+                                       data-gtf-mfp="true"
+                                       data-mfp-options='{"type":"inline"}'>Claim Now!</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card p-4 widget border-0 gallery bg-gray-06 rounded-0 mb-6">
+                        <div class="card-title d-flex mb-0 font-size-md font-weight-semibold text-dark text-uppercase border-bottom pb-2 lh-1">
+                            <span class="text-secondary mr-3">
+                                <svg class="icon icon-ionicons_svg_md-images">
+                                    <use xlink:href="#icon-ionicons_svg_md-images"></use>
+                                </svg>
+                            </span>
+                            <span> photo gallery</span>
+                        </div>
+                        <div class="card-body px-0 pt-6 pb-3">
+                            <div class="photo-gallery d-flex flex-wrap justify-content-between">
+                                <a href="images/shop/full-top-store-1.jpg" class="photo-item"
+                                   data-gtf-mfp="true" data-gallery-id="01">
+                                    <img src="images/listing/gallery-05.jpg" alt="Gallery 05">
+                                </a>
+                                <a href="images/listing/full-gallery-06.jpg" class="photo-item"
+                                   data-gtf-mfp="true" data-gallery-id="01">
+                                    <img src="images/listing/gallery-06.jpg" alt="Gallery 06"></a>
+                                <a href="images/listing/full-gallery-07.jpg" class="photo-item"
+                                   data-gtf-mfp="true" data-gallery-id="01">
+                                    <img src="images/listing/gallery-07.jpg" alt="Gallery 07"></a>
+                                <a href="images/listing/full-gallery-08.jpg" class="photo-item"
+                                   data-gtf-mfp="true" data-gallery-id="01">
+                                    <img src="images/listing/gallery-08.jpg" alt="Gallery 08"></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card p-4 widget border-0 addition-detail bg-gray-06 mb-6 rounded-0">
+                        <div class="card-title d-flex mb-0 font-size-md font-weight-semibold text-dark text-uppercase border-bottom pb-2 lh-1">
+                            <span>additional details</span>
+                        </div>
+                        <div class="card-body px-0 pb-0">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                    <label class="mb-0">Accept Card Pay</label>
+                                    <span class="font-weight-semibold text-danger ml-auto">No</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                    <label class="mb-0">Accept Bitcoin Pay</label>
+                                    <span class="font-weight-semibold text-green ml-auto">Yes</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                    <label class="mb-0">Car Parking</label>
+                                    <span class="font-weight-semibold text-green ml-auto">Yes</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                    <label class="mb-0">Good for Kids</label>
+                                    <span class="font-weight-semibold text-green ml-auto">Yes</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                    <label class="mb-0">Good for Groups</label>
+                                    <span class="font-weight-semibold text-green ml-auto">Yes</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex text-dark px-0">
+                                    <label class="mb-0">Smoking</label>
+                                    <span class="font-weight-semibold text-danger ml-auto">No</span>
+                                </li>
+                                <li class="list-group-item bg-transparent d-flex text-dark px-0 pt-3">
+                                    <a href="#">Show More <span class="d-inline-block ml-2"><i
+                                            class="fal fa-chevron-down"></i></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card p-4 widget border-0 contact bg-gray-06 rounded-0 mb-6">
+                        <div class="card-title mb-0 border-bottom pb-2">
+                            <div class="media">
+                                <div class="image mr-3"><img src="images/listing/jobs-testimonial-1.png"
+                                                             alt="Contact me" class="rounded-circle"></div>
+                                <div class="media-body lh-14">
+                                    <span class="font-weight-semibold text-dark text-capitalize d-block font-size-md name">Ron Weasley</span>
+                                    <span class="text-gray d-block mb-2">San Francisco, CA, USA</span>
+                                    <div class="d-flex pb-4 align-items-center">
+                                        <a href="#"
+                                           class="btn btn-primary font-size-base py-0 px-1 mr-2 rounded-sm">Follow</a>
+                                        <span class="text-dark font-weight-semibold d-inline-block mr-2">2,865</span>
+                                        <span class="text-gray">Followers</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body px-0 pb-3">
+                            <div class="card-title text-uppercase text-dark font-weight-semibold font-size-md">
+                                <span class="text-secondary d-inline-block mr-2"><i
+                                        class="fas fa-envelope"></i></span>
+<span>Contact me</span>
+                            </div>
+                            <div class="contact-form">
+                                <form>
+                                    <div class="form-group mb-2">
+                                        <label class="sr-only" for="name">Name</label>
+                                        <input type="text" id="name"
+                                               class="form-control form-control-sm border-0 bg-white"
+                                               placeholder="Name:">
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <label class="sr-only" for="email">Email</label>
+                                        <input type="text" id="email"
+                                               class="form-control form-control-sm border-0 bg-white"
+                                               placeholder="Email Address:">
+                                    </div>
+                                    <div class="form-group mb-2">
+                                        <label class="sr-only" for="message">Message</label>
+                                        <textarea class="form-control border-0"
+                                                  id="message"
+                                                  placeholder="Message..."></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-block btn-sm">Send Message
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card p-4 widget border-0 relate-listing bg-gray-06 rounded-0">
+                        <div class="card-title d-flex mb-0 font-size-md font-weight-semibold text-dark text-uppercase border-bottom pb-2 lh-1">
+                            <span>related listing</span>
+                        </div>
+                        <div class="card-body px-0 pb-0 pt-3">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item bg-transparent text-dark px-0 py-3 h-100">
+                                    <div class="store media align-items-stretch">
+                                        <div class="store-image">
+                                            <a href="listing-details-full-image.html">
+                                                <img src="images/shop/recent-view-1.jpg" alt="Recent view 1">
+                                            </a>
+                                        </div>
+                                        <div class="media-body pl-0 pl-sm-3 pt-4 pt-sm-0 pr-0">
+                                            <a href="listing-details-full-image.html"
+                                               class="font-size-md font-weight-semibold text-dark d-inline-block mb-1 lh-11"><span
+                                                    class="letter-spacing-25">Canabo View Street,<br> Main St</span>
+                                            </a>
+                                            <div class="d-flex align-items-center mb-1">
+                                                <div class="pr-3"><span
+                                                        class="badge badge-warning d-inline-block mr-1">4.3</span><span
+                                                        class="number">6 rating</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                    <span
+                                            class="d-inline-block mr-1"><i
+                                            class="fal fa-map-marker-alt">
+                                    </i>
+                                        </span>
+                                                <a href="#" class="text-secondary text-decoration-none address">77
+                                                    Main
+                                                    St, Queen,
+                                                    NY</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="list-group-item bg-transparent text-dark px-0 py-3 h-100">
+                                    <div class="store media align-items-stretch">
+                                        <div class="store-image">
+                                            <a href="listing-details-full-image.html">
+                                                <img src="images/shop/recent-view-2.jpg" alt="Recent view 1">
+                                            </a>
+                                        </div>
+                                        <div class="media-body pl-0 pl-sm-3 pt-4 pt-sm-0 pr-0">
+                                            <a href="listing-details-full-image.html"
+                                               class="font-size-md font-weight-semibold text-dark d-inline-block mb-1 lh-11"><span
+                                                    class="letter-spacing-25">Japan's Sushi <br> 10th Ave St</span>
+                                            </a>
+                                            <div class="d-flex align-items-center mb-1">
+                                                <div class="pr-3"><span
+                                                        class="badge badge-success d-inline-block mr-1">5.0</span><span
+                                                        class="number">7 rating</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                    <span
+                                            class="d-inline-block mr-1"><i
+                                            class="fal fa-map-marker-alt">
+                                    </i>
+                                        </span>
+                                                <a href="#" class="text-secondary text-decoration-none address">99
+                                                    10th Ave St,
+                                                    Mahattan</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="recent-view bg-white pt-9 pb-11">
+        <div class="container">
+            <div class="mb-6">
+                <h5 class="mb-0">
+                    Recently Viewed
+                </h5>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <div class="store media align-items-stretch bg-white">
+                        <div class="store-image position-relative">
+                            <a href="listing-details-full-image.html">
+                                <img src="images/shop/recent-view-1.jpg" alt="Recent view 1">
+                            </a>
+                            <div class="image-content position-absolute d-flex align-items-center">
+                                <div class="content-right ml-auto d-flex">
+                                    <a href="images/shop/full-top-place-3.jpg"
+                                       class="item viewing"
+                                       data-toggle="tooltip"
+                                       data-placement="top"
+                                       title="Quickview" data-gtf-mfp="true">
+                                        <svg class="icon icon-expand">
+                                            <use xlink:href="#icon-expand"></use>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="item marking" data-toggle="tooltip"
+                                       data-placement="top"
+                                       title="Bookmark"><i class="fal fa-bookmark"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="media-body pl-0 pl-sm-3 pt-4 pt-sm-0">
+                            <a href="listing-details-full-image.html"
+                               class="font-size-md font-weight-semibold text-dark d-inline-block mb-2 lh-11"><span
+                                    class="letter-spacing-25">Canabo View Street, Main St</span> </a>
+                            <ul class="list-inline store-meta mb-2 lh-1 font-size-sm d-flex align-items-center flex-wrap">
+                                <li class="list-inline-item"><span
+                                        class="badge badge-warning d-inline-block mr-1">4.3</span><span
+                                        class="number">6 rating</span>
+                                </li>
+                                <li class="list-inline-item separate"></li>
+                                <li class="list-inline-item"><span class="mr-1">From</span><span
+                                        class="text-danger font-weight-semibold">$8.00</span></li>
+                            </ul>
+                            <div>
+                                    <span
+                                            class="d-inline-block mr-1"><i
+                                            class="fal fa-map-marker-alt">
+                                    </i>
+                                        </span>
+                                <a href="#" class="text-secondary text-decoration-none address">77 Main St,
+                                    Queen,
+                                    NY</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <div class="store media align-items-stretch bg-white">
+                        <div class="store-image position-relative">
+                            <a href="listing-details-full-image.html">
+                                <img src="images/shop/recent-view-2.jpg" alt="Recent view 1">
+                            </a>
+                            <div class="image-content position-absolute d-flex align-items-center">
+                                <div class="content-right ml-auto d-flex">
+                                    <a href="images/shop/full-top-place-4.jpg"
+                                       class="item viewing"
+                                       data-toggle="tooltip"
+                                       data-placement="top"
+                                       title="Quickview" data-gtf-mfp="true">
+                                        <svg class="icon icon-expand">
+                                            <use xlink:href="#icon-expand"></use>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="item marking" data-toggle="tooltip"
+                                       data-placement="top"
+                                       title="Bookmark"><i class="fal fa-bookmark"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="media-body pl-0 pl-sm-3 pt-4 pt-sm-0">
+                            <a href="listing-details-full-image.html"
+                               class="font-size-md font-weight-semibold text-dark d-inline-block mb-2 lh-11"><span
+                                    class="letter-spacing-25">Japan's Sushi - 10th Ave St</span> </a>
+                            <ul class="list-inline store-meta mb-2 lh-1 font-size-sm d-flex align-items-center flex-wrap">
+                                <li class="list-inline-item"><span
+                                        class="badge badge-success d-inline-block mr-1">5.0</span><span
+                                        class="number">7 rating</span>
+                                </li>
+                                <li class="list-inline-item separate"></li>
+                                <li class="list-inline-item"><span class="mr-1">From</span><span
+                                        class="text-danger font-weight-semibold">$12.00</span></li>
+                            </ul>
+                            <div>
+                                    <span
+                                            class="d-inline-block mr-1"><i
+                                            class="fal fa-map-marker-alt">
+                                    </i>
+                                        </span>
+                                <a href="#" class="text-secondary text-decoration-none address">99 10th Ave
+                                    St,
+                                    Mahattan, NY</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <div class="store media align-items-stretch bg-white">
+                        <div class="store-image position-relative">
+                            <a href="listing-details-full-image.html">
+                                <img src="images/shop/recent-view-3.jpg" alt="Recent view 1">
+                            </a>
+                            <div class="image-content position-absolute d-flex align-items-center">
+                                <div class="content-right ml-auto d-flex">
+                                    <a href="images/shop/full-top-place-5.jpg"
+                                       class="item viewing"
+                                       data-toggle="tooltip"
+                                       data-placement="top"
+                                       title="Quickview" data-gtf-mfp="true">
+                                        <svg class="icon icon-expand">
+                                            <use xlink:href="#icon-expand"></use>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="item marking" data-toggle="tooltip"
+                                       data-placement="top"
+                                       title="Bookmark"><i class="fal fa-bookmark"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="media-body pl-0 pl-sm-3 pt-4 pt-sm-0">
+                            <a href="listing-details-full-image.html"
+                               class="font-size-md font-weight-semibold text-dark d-inline-block mb-2 lh-11"><span
+                                    class="letter-spacing-25">Korean Bingsu Shop</span></a>
+                            <ul class="list-inline store-meta mb-2 lh-1 font-size-sm d-flex align-items-center flex-wrap">
+                                <li class="list-inline-item"><span
+                                        class="badge badge-success d-inline-block mr-1">5.0</span><span
+                                        class="number">7 rating</span>
+                                </li>
+                                <li class="list-inline-item separate"></li>
+                                <li class="list-inline-item"><span class="mr-1">From</span><span
+                                        class="text-danger font-weight-semibold">$12.00</span></li>
+                            </ul>
+                            <div>
+                                    <span
+                                            class="d-inline-block mr-1"><i
+                                            class="fal fa-map-marker-alt">
+                                    </i>
+                                        </span>
+                                <a href="#" class="text-secondary text-decoration-none address">534 Salem
+                                    Rd St,
+                                    Newark, NY</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #wrapper-content end -->
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+
+<script>
+
+var my_vue_app = new Vue({
+    el: "#main-container",
+    delimiters: ['${', '}'],
+    data: {
+        business_id: "{{ business.id }}",
+        receipt: "",
+        price: null,
+        customer_id: null,
+        customer_name: null,
+        reward_points: 0,
+        available_points: 0,
+    
+        custom_error: null,
+        customer_name_error: false,
+        my_error: false,
+        success: false,
+
+        reward_points: 0,
+        membership_level: null,
+        
+
+        payment: {
+            via_money: 0,
+            via_points: 0,
+            payment_msg: "" 
+        }
+    },
+
+    methods: {
+        get_customer_name: function () {
+            if (this.customer_id) {
+                let my_customer_id = this.customer_id;
+                let my_business_id = this.business_id;
+                $.ajax({
+                    url: "{% url 'get_user' %}",
+                    type: "GET",
+                    data: {
+                        customer_id: my_customer_id,
+                        business_id: my_business_id
+                    },
+                    success: (response)=>{
+                        console.log(response);
+                        if (response['result']) {
+                            this.customer_name = response.result.name;
+                            this.available_points = response.result.account_info.total_balance;
+                            this.membership_level = response.result.account_info.membership_level;
+                            this.customer_name_error = false;
+                        }else{
+                            this.customer_name = null;
+                            this.customer_name_error = true;
+                        }
+                    }
+                })
+            }else{
+                this.customer_name = null;
+            }
+        },
+
+        check_calculation: function () {
+            this.reward_points = 0;
+            if (this.price) {
+                this.price = parseFloat(this.price);
+                
+                if (this.payment.via_points) {
+                    this.payment.via_points = parseFloat(this.payment.via_points);                    
+                }
+
+                if (this.payment.via_money) {
+                    this.payment.via_money = parseFloat(this.payment.via_money);                    
+                }
+
+                if (this.payment.via_points > 0) {
+                    if (this.payment.via_points > this.available_points) {
+                        this.payment.payment_msg = `You have <b>${this.available_points} points</b> to use here!.`;
+                        return false;
+                    }
+                    let at_most_points = (this.price / 100)*25; 
+                    if (at_most_points < this.payment.via_points) {
+                        this.payment.payment_msg = `You can use at most <b>${at_most_points} points</b>`;
+                        return false;
+                    }
+                }
+                if (this.payment.via_points + this.payment.via_money != this.price) {
+                    this.payment.payment_msg = `<b>Money</b> + <b>points</b> must be equal to cost i.e. <b>${this.price}</b>`;
+                    return false;
+                }
+
+                this.reward_points = (this.payment.via_money / 100)*this.membership_level;
+                this.payment.payment_msg = "";
+                return true;
+            }
+
+            return true;
+        },
+
+        reset: function () {
+            this.receipt = "";
+            this.price = null;
+            this.customer_id = null;
+            this.customer_name = null;
+            this.reward_points = 0;
+            this.available_points = 0;
+        
+            this.custom_error = null;
+            this.customer_name_error = false;
+            this.my_error = false;
+            this.success = false;
+
+            this.reward_points = 0;
+            this.membership_level = null;
+            
+
+            this.payment = {
+                via_money: 0,
+                via_points: 0,
+                payment_msg: "" 
+            }
+
+        },
+
+        add_new_transaction: function () {     
+            if (this.business_id && this.receipt && this.price && this.customer_name && this.customer_id && this.payment.via_money > 0 && this.payment.via_points != null && this.check_calculation()) {
+              
+                $.ajax({
+                    url: "{% url 'add_new_transaction' %}",
+                    type: "GET",
+                    data: {
+                        business_id: this.business_id,
+                        receipt: this.receipt,
+                        price: this.price,
+                        customer_id: this.customer_id,
+                        via_money: this.payment.via_money,
+                        via_points: this.payment.via_points,
+                        reward_points: this.reward_points
+
+                    },
+                    success: (response)=>{
+                        if (response['result']) {
+                            this.reset();      
+                            this.success = true;
+
+                            setTimeout(() => {
+                                this.success = false;
+                            }, 1500);   
+                        }else{
+                            this.custom_error = response['msg'] 
+                        }
+                    }
+                });
+                
+              
+
+            }else{
+                this.my_error = true;
+
+            }
+        }
+
+    },
+
+    created(){
+
+    
+    }
+});
+
+
+</script>
+
+
+
+
+<script>
+
+    function openNav() {
+        document.getElementById("mySidenav").style.width = "600px";
+        $("#mySidenav").css('box-shadow', '10px 10px 10px 15px #cccccc');
+    }
+
+    function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+        $("#mySidenav").css('box-shadow', 'none');    
+    }
+
+
+
+
+
+    var map;
+
+    function initMap() {
+        var latlng = new google.maps.LatLng(40.762529, -73.957334);
+
+        var mapProp = {
+            center: latlng,
+            zoom: 12,
+            mapTypeId: 'roadmap',
+            disableDefaultUI: true,
+            styles: [
+                {
+                    "featureType": "administrative.country",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#ffffff"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "administrative.province",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#ffffff"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "administrative.province",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                        {
+                            "color": "#c3b6a2"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "landscape.man_made",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#ffffff"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "landscape.man_made",
+                    "elementType": "labels.text",
+                    "stylers": [
+                        {
+                            "color": "#c3b6a2"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "landscape.man_made",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                        {
+                            "color": "#c3b6a2"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "landscape.natural",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#ffffff"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "landscape.natural.landcover",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#ffffff"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "landscape.natural.terrain",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#ffffff"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "poi.business",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#ffffff"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "poi.park",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#ffffff"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "poi.park",
+                    "elementType": "labels.icon",
+                    "stylers": [
+                        {
+                            "color": "#808080"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "poi.park",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                        {
+                            "color": "#808080"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "poi.school",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#ffffff"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.arterial",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#f0f0f0"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.arterial",
+                    "elementType": "geometry.stroke",
+                    "stylers": [
+                        {
+                            "color": "#c0c0c0"
+                        },
+                        {
+                            "saturation": -75
+                        },
+                        {
+                            "lightness": -80
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.arterial",
+                    "elementType": "labels",
+                    "stylers": [
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.highway",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#ededed"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.highway",
+                    "elementType": "geometry.stroke",
+                    "stylers": [
+                        {
+                            "color": "#ededed"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.highway",
+                    "elementType": "labels",
+                    "stylers": [
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.highway",
+                    "elementType": "labels.text",
+                    "stylers": [
+                        {
+                            "color": "#ededed"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.highway",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                        {
+                            "color": "#91bbd5"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.highway.controlled_access",
+                    "stylers": [
+                        {
+                            "color": "#ededed"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.local",
+                    "stylers": [
+                        {
+                            "visibility": "off"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.local",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#ededed"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "transit.line",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#f0f0f0"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "transit.station.airport",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                        {
+                            "color": "#c3b6a2"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "water",
+                    "elementType": "geometry.fill",
+                    "stylers": [
+                        {
+                            "color": "#c7d7d4"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "water",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                        {
+                            "color": "#91bbd5"
+                        }
+                    ]
+                }
+            ]
+        };
+        map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+
+    }
+</script>
+
+
+
+{% endblock content %}
+
+
+
