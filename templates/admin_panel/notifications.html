@@ -1,0 +1,412 @@
+{% extends 'inc/base.html' %}
+{% load static %}
+{% block classpanel %} panel dashboards{% endblock classpanel %}
+{% block content %}
+<div id="wrapper-content" class="wrapper-content pt-0 pb-0">
+    <div class="page-wrapper d-flex flex-wrap flex-xl-nowrap">
+       
+        {% include 'admin_panel/inc/profile-side-panel.inc.html' %}
+
+        <div class="page-container">
+            <div class="container-fluid">
+                <div class="page-content-wrapper d-flex flex-column justify-content-center">
+                    <h2 class="mb-5 text-secondary">Custom notification</h2>
+                    
+                    <div class="border mb-5 p-4 px-5 bg-white">
+                
+                        <div id="create-custom-notification-new">
+                            <div class="row">
+                                <div class="col-sm-8">
+
+                                    <h4 class="mb-0">Write notification aler</h4>
+                                    
+                                    <p></p>
+                                    <div>
+                                        <div class="form-group">
+                                            <h6 class="text-secondary mt-3">Title (Subject)</h6>
+                                            <input type="text" v-model="notification.subject" class="form-control">
+                                        </div>
+                        
+                                        <div class="form-group">
+                                            <h6 class="text-secondary mt-3">Body (main content)</h6>
+                                            <textarea class="form-control" v-model="notification.body" rows="3"></textarea>
+                                        </div>
+
+                                        <p 
+                                            v-if="body_error"
+                                            class="mt-3 text-danger">
+                                            ${ body_error }
+                                        </p>
+
+                                        <div class="form-group">
+                                            <!-- <label>Send to</label> -->
+                                            <button 
+                                                v-on:click="send_notification()"
+                                                type="button" 
+                                                class="btn btn-primary d-flex align-items-center">
+                                                <div
+                                                    v-if="loading"
+                                                    class="spinner-border spinner-border-sm mr-2"></div>
+                                                Send notification
+                                            </button>
+                                            
+                        
+                                        </div>
+
+                                        <span 
+                                            v-for="name in result_names" 
+                                            class="badge custom-badge radius-100 px-1 mr-2 mb-2 py-1 px-2">
+                                            ${ name }
+                                        </span>                                      
+                        
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <h4 class="mb-0 d-flex align-items-center">Filters 
+                                        <span 
+                                            v-if="is_applied"
+                                            class="material-icons text-success ml-1">check_circle</span>
+                                    </h4>
+                                    <p>Select whom you want to send notification</p>
+                                    <div class="btn-group btn-block mb-1">
+                                        <button 
+                                            v-on:click="select_receiver('everyone')"
+                                            type="button" 
+                                            class="btn"
+                                            :class="[(notification.receiver.type == 'everyone' ? 'btn-primary' : 'btn-outline-primary')]"
+                                            >Everyone</button>
+                                        <button 
+                                            v-on:click="select_receiver('owners')"
+                                            type="button" 
+                                            class="btn"
+                                            :class="[(notification.receiver.type == 'owners' ? 'btn-primary' : 'btn-outline-primary')]"
+                                            >Owners</button> 
+                                        <button 
+                                            v-on:click="select_receiver('users')"
+                                            type="button" 
+                                            class="btn"
+                                            :class="[(notification.receiver.type == 'users' ? 'btn-primary' : 'btn-outline-primary')]"
+                                            >Members</button>
+                                    </div>
+
+                                    <div>
+                                        <h6 class="text-secondary mt-3">Select quantity</h6>
+                                        <div class="btn-group btn-block mb-1">
+                                            <button 
+                                                v-on:click="select_receiver_quantity('all')"
+                                                type="button" 
+                                                class="btn"
+                                                style="width: 50%;"
+                                                :class="[(notification.receiver.quantity == 'all' ? 'btn-primary' : 'btn-outline-primary')]"
+                                                >All</button> 
+                                            <button 
+                                                v-on:click="select_receiver_quantity('select')"
+                                                type="button"
+                                                style="width: 50%;" 
+                                                class="btn"
+                                                :class="[(notification.receiver.quantity == 'select' ? 'btn-primary' : 'btn-outline-primary')]"
+                                                >Select</button>
+                                        </div>
+
+                                        <div v-if="notification.receiver.quantity == 'select'">
+                                            <button type="button" class="btn my-3 btn-block" style="background-color: #eeeeee;">
+                                                Selected (${notification.receiver.selected_receiver['owner'].length + notification.receiver.selected_receiver['user'].length })
+                                            </button>
+
+                                            <div class="my-3">
+                                                <div class="form-group">
+                                                    <input type="text" 
+                                                            v-model="my_search.query" 
+                                                            @keyup="search()"
+                                                            placeholder="Search by email, id, name" class="form-control">
+                                                    <div>
+                                                        <p 
+                                                            v-if="my_search.result.length < 1 && my_search.query" 
+                                                            class="text-danger">No result found for this query</p>
+
+                                                        <div v-else>
+
+                                                            <div
+                                                                v-for="(user, searched_user_index) in my_search.result" 
+                                                                v-if="!(is_already_selected(searched_user_index))" 
+                                                                v-on:click="mark_as_selected(searched_user_index)"
+                                                                class="suggestion-user google-box p-3">
+                                                                <p class="mb-0">
+                                                                    <b>${ user[1] } ${ user[2] }
+                                                                        <span title="Status" class="badge custom-badge radius-100 px-1">${ user[4] }</span>
+                                                                    </b>
+                                                                </p>
+                                                                <p class="mb-0">${ user[3] }</p>
+                                                            </div>
+        
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div>
+                                        <h6 class="text-secondary mt-3">Select city</h6>
+
+                                        <div class="btn-group btn-block mb-1">
+                                            <button 
+                                                v-on:click="select_receiver_city('all')"
+                                                type="button" 
+                                                class="btn"
+                                                style="width: 50%;"
+                                                :class="[(notification.receiver.city == 'all' ? 'btn-primary' : 'btn-outline-primary')]"
+                                                >All</button> 
+                                            <button 
+                                                v-on:click="select_receiver_city('select')"
+                                                type="button"
+                                                style="width: 50%;" 
+                                                class="btn"
+                                                :class="[(notification.receiver.city == 'select' ? 'btn-primary' : 'btn-outline-primary')]"
+                                                >Select</button>
+                                        </div>
+
+                                        <div class="my-3" v-if="notification.receiver.city == 'select'">
+                                            <div class="form-group">
+                                                <div class="form-group">
+                                                    <select 
+                                                        v-model="notification.receiver.selected_city"
+                                                        class="custom-select" id="exampleSelect">
+                                                        <option value="">Select city</option>
+                                                        <option 
+                                                            v-for="(city, city_index) in all_city"
+                                                            :value="city_index+1">${ city }</option>
+                                                    </select>
+                                                </div>
+                                              
+                                            </div>
+                                        </div>
+                                        <p class="text-danger mt-3" v-if="filter_error">${filter_error}</p>
+                                  
+                                        <button 
+                                            type="button" 
+                                            class="mt-4 btn btn-block btn-secondary" 
+                                            v-on:click="apply_filters()">Apply filters</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                         
+                        </div>
+                    </div>
+
+                
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script src="{% static 'js/collapse.js' %}"></script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+<script>
+    var business_owner_data = {{ all_business_owners | safe }};
+    var customers_data = {{ all_members | safe }};
+    
+    console.log(customers_data);
+    console.log("====");
+    console.log(business_owner_data);
+    
+    var my_notification_app = new Vue({
+        el: "#create-custom-notification-new",
+        delimiters: ['${', '}'],
+        data: {
+            loading: false,
+            body_error: "",
+            is_applied: false,
+            filter_error: "",
+            result_names: [],
+            all_city: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "Octobebr", "November", "December"],
+            loaded_data: {
+                "users": customers_data,
+                "owners": business_owner_data,
+                "everyone": customers_data.concat(business_owner_data) 
+            },
+            my_search: {
+                query: "",
+                result: []
+            },
+            notification: {
+                subject: "", 
+                body: "",
+                receiver: {
+                    type: "everyone",
+                    selected_receiver:{
+                        "owner": [],
+                        "user": []
+                    },
+                    quantity: "all", 
+                    city: "all",
+                    selected_city: ""
+                }
+            }
+            
+        },
+    
+        methods: {
+            select_receiver: function (type) {
+                console.log(type);
+                this.notification.receiver.type = type;
+            },
+            select_receiver_quantity: function (quantity) {
+                this.notification.receiver.quantity = quantity;
+            },
+            select_receiver_city: function (status) {
+                this.notification.receiver.city = status;
+            },
+            mark_as_selected: function(searched_user_index){
+                let searched_user = this.my_search.result[searched_user_index];
+                this.notification.receiver.selected_receiver[searched_user[4]].push(searched_user[0]);
+                // this.my_search.query = "";
+            },
+            is_already_selected: function(searched_user_index){
+                let searched_user = this.my_search.result[searched_user_index];
+                return this.notification.receiver.selected_receiver[searched_user[4]].includes(searched_user[0])
+            },
+            search: function () {
+                query = this.my_search.query.toLowerCase();
+                let results = [];
+                if(!(query)){
+                    this.my_search.result = results;
+                    return;
+                }
+                let list_to_search_in = this.loaded_data[this.notification.receiver.type];
+                for (let index = 0; index < list_to_search_in.length; index++) {
+                    let user = list_to_search_in[index];
+                    for (let j = 0; j < (user.length - 1); j++) {
+                        let to_match_with = JSON.stringify(user[j]).toLowerCase();
+                        if (query == to_match_with || to_match_with.includes(query)) {
+                            results.push(user);
+                            break;
+                        }
+                    }
+                }
+                this.my_search.result = results;
+                console.log(results);
+            },
+            send: function () {
+                console.log(this.notification);
+            },
+
+            show_details: function () {
+                console.log(this.notification);    
+            },
+
+            reset: function () {
+
+                this.body_error = "";
+                this.is_applied = true;
+                this.filter_error = "";
+
+                this.my_search = {
+                    query: "",
+                    result: []
+                }
+
+                this.notification = {
+                    subject: "", 
+                    body: "",
+                    receiver: {
+                        type: "everyone",
+                        selected_receiver:{
+                            "owner": [],
+                            "user": []
+                        },
+                        quantity: "all", 
+                        city: "all",
+                        selected_city: ""
+                    }
+                }
+
+
+            },
+
+            send_notification: function() {
+                let my_notification = this.notification;
+                if (!(this.notification.subject) || !(this.notification.body)) {
+                    this.body_error = "Kindly fill all fields before submission!";
+                    return;
+                }else{
+                    this.loading = true;
+                    this.body_error = "";
+                    $.ajax({
+                        url: "{% url 'send_general_notification' %}",
+                        type: "GET",
+                        data: {
+                            notification: JSON.stringify(my_notification)
+                        },
+                        success: (response)=>{
+                            this.loading = false;
+                            alert(response.message);
+                            if (response.status) {
+                                this.reset();
+                                this.apply_filters();
+                            }
+                        }
+                    })
+                }
+            },
+
+            apply_filters: function () {
+                let notification = this.notification.receiver;
+                if(notification.quantity != "all"){
+                    let all_selected = notification.selected_receiver.owner.concat(notification.selected_receiver.user)
+                    if (all_selected.length == 0) {
+                        this.filter_error = "Select at least 1 member by search option.";
+                        return;
+                    }else{
+                        this.filter_error = "";
+                    }
+                }
+                if (notification.city != "all"){
+                    if(notification.selected_city == "") {
+                        this.filter_error = "Select city before applying filters.";
+                        return;
+                    }else{
+                        this.filter_error = "";
+                    }
+                }   
+
+                $.ajax({
+                    url: "{% url 'selected_receiver' %}",
+                    type: "GET",
+                    data: {
+                        notification: JSON.stringify(notification),
+                    },
+                    success: (response)=>{
+                        this.result_names = response.names;
+                        this.is_applied = true;
+                    }
+                });
+                // console.log(notification);
+            }
+
+
+        },
+    
+        created(){
+            console.log("get ready!!!");
+            this.apply_filters();
+        }
+    });
+    
+    </script>
+
+{% endblock content %}
+
+

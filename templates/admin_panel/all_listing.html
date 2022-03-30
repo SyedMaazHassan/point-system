@@ -1,0 +1,379 @@
+{% extends 'inc/base.html' %}
+{% load static %}
+{% block classpanel %} panel dashboards{% endblock classpanel %}
+{% block content %}
+
+
+
+
+
+
+<div id="wrapper-content" class="wrapper-content pt-0 pb-0">
+    <div class="page-wrapper d-flex flex-wrap flex-xl-nowrap">
+       
+        {% include 'admin_panel/inc/profile-side-panel.inc.html' %}
+
+        <div class="page-container">
+            <div class="container-fluid">
+                <div class="page-content-wrapper d-flex flex-column justify-content-center">
+                    
+
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <h2 class="mb-5 text-secondary">All Listings</h2>
+                        </div>
+
+                        <div class="col-sm-4 d-flex align-items-center">
+                            
+                            <form method="GET" style="width: 100%;">
+                                <div class="row px-2">
+                                    <div class="col-sm-9 px-2">
+                                        <input type="text" name="query" placeholder="Id, name, org no." class="form-control" value="{{ request.GET.query }}" required>
+                                    </div>
+
+                                    <div class="col-sm-3 px-2">
+                                        <button type="submit" class="btn btn-block btn-primary p-0">
+                                            <i class="material-icons my-0 mt-1">search</i>
+                                        </button>
+                                    </div>
+                                </div>                                
+                            </form>
+                        </div>
+                    </div>
+
+                    {% if request.GET.query %}
+                        <div class="mb-3">
+                            <h1 class="display-4" style="font-size: 36px;">Search results for <b><span style="font-weight: 500;">{{ request.GET.query }}</span></b></h1>
+                            <h1 class="display-4 mt-3" style="font-size: 20px;"><b><span style="font-weight: bolder;">{{ all_business.count }}</span> results found</b></h1>
+                        </div>
+                    {% endif %}
+
+
+                    <div id="business-section">
+
+                        {% include 'admin_panel/inc/business-listing-section.html' %}
+                        
+                    </div>
+                    <!-- <div class="features card-deck">
+                        
+                        
+
+                     
+
+
+                    
+                        <div class="card rounded-0 border-0 bg-transparent mb-6">
+                            <div class="card-body d-flex align-items-center py-6 px-8 bg-white">
+                                <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 text-darker-light lh-1">0</span>
+                                <span class="font-size-md font-weight-semibold text-uppercase text-dark lh-13">Pending<br> Listings</span>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 border-0 bg-transparent mb-6">
+                            <div class="card-body d-flex align-items-center py-6 px-8 bg-white">
+                                <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 lh-1 published">12</span>
+                                <span class="font-size-md font-weight-semibold text-uppercase text-dark lh-13">published<br> Listings</span>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 border-0 bg-transparent mb-6">
+                            <div class="card-body d-flex align-items-center py-6 px-8 bg-white">
+                                <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 lh-1 experied">2</span>
+                                <span class="font-size-md font-weight-semibold text-uppercase text-dark lh-13">Experied<br> Listings</span>
+                            </div>
+                        </div>
+                        <div class="card rounded-0 border-0 bg-transparent mb-6">
+                            <div class="card-body d-flex align-items-center p-6 bg-white">
+                                <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 lh-1 active">1</span>
+                                <span class="font-size-md font-weight-semibold text-uppercase text-dark lh-13">Active campaign <br> Listings</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex two-column mb-13 mx-n3">
+                        <div class="page-left mb-6 px-3">
+                            <div class="alert alert-success mb-6 alert-dismissible fade show d-flex align-items-center pr-3">
+                                <div class="font-size-lg py-0 mr-6">Your listing <a
+                                        href="listing-details-full-image.html"
+                                        class="font-weight-semibold link-hover-dark-primary">Hotel Govendor</a>
+                                    has
+                                    been
+                                    approved!
+                                </div>
+                                <div class="ml-auto">
+                                    <a href="#" class="alert-button py-0 font-size-h3 lh-1" data-dismiss="alert"
+                                       aria-label="Close"><i class="fal fa-times"></i></a>
+                                </div>
+                            </div>
+                            <div class="facts-box mb-6 row">
+                                <div class="col-lg-4 mb-6 mb-xl-0">
+                                    <div class="card view rounded-0 border-0 text-white">
+                                        <div class="card-body d-flex align-items-center p-0">
+                                            <div class="content mr-auto">
+                                                <span class="font-size-h1 font-weight-semibold lh-1 d-block">824</span>
+                                                <span class="font-size-lg">Total Views</span>
+                                            </div>
+                                            <div class="fact-icon">
+                                                <svg class="icon icon-eye">
+                                                    <use xlink:href="#icon-eye"></use>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-6 mb-xl-0">
+                                    <div class="card review rounded-0 border-0 text-white">
+                                        <div class="card-body d-flex align-items-center p-0">
+                                            <div class="content mr-auto">
+                                                <span class="font-size-h1 font-weight-semibold lh-1 d-block">73</span>
+                                                <span class="font-size-lg">Total Reviews</span>
+                                            </div>
+                                            <div class="fact-icon">
+                                                <i class="fal fa-star"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="card time-bookmark rounded-0 border-0 text-white">
+                                        <div class="card-body d-flex align-items-center p-0">
+                                            <div class="content mr-auto">
+                                                <span class="font-size-h1 font-weight-semibold lh-1 d-block">269</span>
+                                                <span class="font-size-lg">Times Bookmarked</span>
+                                            </div>
+                                            <div class="fact-icon">
+                                                <i class="fal fa-bookmark"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row tables">
+                                <div class="col-xl-6 mb-6 mb-xl-0">
+                                    <div class="card rounded-0 border-0 reccent-activities">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-capitalize border-bottom pb-2 mb-2">
+                                                Recent
+                                                Activities</h5>
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="icon-box no-shape icon-box-style-03 d-flex">
+                                                            <span class="icon-box-icon">
+                                                                <svg class="icon icon-layers"><use
+                                                                        xlink:href="#icon-layers"></use></svg>
+                                                            </span>
+                                                                    <div class="content-box">Your listing <a
+                                                                            href="listing-details-full-image.html"
+                                                                            class="font-weight-semibold link-hover-dark-primary">Hotel
+                                                                        Govendor</a>
+                                                                        has
+                                                                        been approved!
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>8 Hours ago</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="icon-box no-shape icon-box-style-03 d-flex">
+                                                            <span class="icon-box-icon">
+                                                                <i class="fal fa-bookmark"></i>
+                                                            </span>
+                                                                    <div class="content-box"><a href="#"
+                                                                                                class="font-weight-semibold link-hover-dark-primary">David
+                                                                        Eggsy</a>
+                                                                        bookmarked your <a
+                                                                                href="listing-details-full-image.html"
+                                                                                class="font-weight-semibold link-hover-dark-primary">Thai
+                                                                            Taste’s Restaurant</a>
+                                                                        listing!
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>15 Hours ago</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="icon-box no-shape icon-box-style-03 d-flex">
+                                                            <span class="icon-box-icon">
+                                                                <i class="fal fa-star"></i>
+                                                            </span>
+                                                                    <div class="content-box"><a href="#"
+                                                                                                class="font-weight-semibold link-hover-dark-primary">Kathy
+                                                                        Brown</a>
+                                                                        left a review <a
+                                                                                href="panel-review-submitted.html"
+                                                                                class="font-weight-semibold link-hover-dark-primary">5
+                                                                            Star</a>
+                                                                        on
+                                                                        <a href="listing-details-full-image.html"
+                                                                           class="font-weight-semibold link-hover-dark-primary">Roman
+                                                                            Kraft Hotel</a>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>1 days ago</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="icon-box no-shape icon-box-style-03 d-flex">
+                                                            <span class="icon-box-icon">
+                                                                <svg class="icon icon-layers"><use
+                                                                        xlink:href="#icon-layers"></use></svg>
+                                                            </span>
+                                                                    <div class="content-box">Your listing <a
+                                                                            href="listing-details-full-image.html"
+                                                                            class="font-weight-semibold link-hover-dark-primary">Hotel
+                                                                        Govendor</a>
+                                                                        has
+                                                                        been approved!
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>8 Hours ago</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="icon-box no-shape icon-box-style-03 d-flex">
+                                                            <span class="icon-box-icon">
+                                                                <i class="fal fa-bookmark"></i>
+                                                            </span>
+                                                                    <div class="content-box"><a href="#"
+                                                                                                class="font-weight-semibold link-hover-dark-primary">David
+                                                                        Eggsy</a>
+                                                                        bookmarked your <a
+                                                                                href="listing-details-full-image.html"
+                                                                                class="font-weight-semibold link-hover-dark-primary">Thai
+                                                                            Taste’s Restaurant</a>
+                                                                        listing!
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>15 Hours ago</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <div class="icon-box no-shape icon-box-style-03 d-flex">
+                                                            <span class="icon-box-icon">
+                                                                <i class="fal fa-star"></i>
+                                                            </span>
+                                                                    <div class="content-box"><a href="#"
+                                                                                                class="font-weight-semibold link-hover-dark-primary">Kathy
+                                                                        Brown</a>
+                                                                        left a review <a
+                                                                                href="panel-review-submitted.html"
+                                                                                class="font-weight-semibold link-hover-dark-primary">5
+                                                                            Star</a>
+                                                                        on
+                                                                        <a href="listing-details-full-image.html"
+                                                                           class="font-weight-semibold link-hover-dark-primary">
+                                                                            Roman Kraft Hotel</a>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                            <td>1 days ago</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6">
+                                    <div class="card rounded-0 border-0 invoices">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-capitalize border-bottom pb-2 mb-2">
+                                                Invoices</h5>
+                                            <div class="table-responsive-sm">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Date</th>
+                                                            <th>Plan</th>
+                                                            <th>Amount</th>
+                                                            <th>Status</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <a href="panel-invoice-details.html"
+                                                                   class="link-hover-dark-blue">INV-00001</a>
+                                                            </td>
+                                                            <td>22/10/2017</td>
+                                                            <td>Basic</td>
+                                                            <td>$264.00</td>
+                                                            <td><span class="status paid">Paid</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <a href="panel-invoice-details.html"
+                                                                   class="link-hover-dark-blue">INV-00002</a>
+
+                                                            </td>
+                                                            <td>15/16/2016</td>
+                                                            <td>Premium</td>
+                                                            <td>$528.00</td>
+                                                            <td><span class="status overdue">Overdue</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <a href="panel-invoice-details.html"
+                                                                   class="link-hover-dark-blue">INV-00003</a>
+                                                            </td>
+                                                            <td>18/10/2017</td>
+                                                            <td>Ultimate</td>
+                                                            <td>$1,528.00</td>
+                                                            <td><span class="status pending">Pending</span></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="page-right px-3">
+                            <div class="card rounded-0 border-0 contact py-6 px-3">
+                                <div class="card-body text-center p-0">
+                                    <div class="contact-icon text-dark mb-3">
+                                        <svg class="icon icon-headset">
+                                            <use xlink:href="#icon-headset"></use>
+                                        </svg>
+                                    </div>
+                                    <div class="text-dark font-size-md mb-5">
+                                        <p class="mb-2">Have any problem and<br> need support? Call Us directly
+                                        </p>
+                                        <p class="font-weight-semibold h5 mb-2">(+34) 967-123-888</p>
+                                        <p>Or chat with us</p>
+                                    </div>
+                                    <a href="#" class="btn btn-primary font-size-md px-8 lh-15">Contact Us</a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="copy-right mt-auto">
+                        &copy; 2020 Thedir. All Rights Reserved.
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    var default_business = "{{ request.GET.select_business }}";
+    var GET_CUSTOMER_LIST_URL = "{% url 'get_customer_list' %}";
+    var SEND_POINT_URL = "{% url 'send_points' %}";
+</script>
+<script src="{% static 'js/point-right-section.js' %}"></script>
+
+{% endblock content %}
+
+

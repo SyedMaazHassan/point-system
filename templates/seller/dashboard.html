@@ -35,6 +35,14 @@
         {% include 'inc/navbar.inc.html' %}
         <!-- #header end -->
         <!-- #wrapper-content start -->
+        {% for message in messages %}
+            {% if message %}
+            <div class="alert alert-primary" role="alert">
+                {{ message }}
+            </div>
+            {% endif %}
+        {% endfor %}
+
         <div id="wrapper-content" class="wrapper-content pt-0 pb-0">
             <div class="page-wrapper d-flex flex-wrap flex-xl-nowrap">
 

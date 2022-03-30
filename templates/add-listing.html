@@ -16,6 +16,7 @@
 		</div>
 	</div>
 </div>
+
 <div id="wrapper-content" class="wrapper-content pt-0 pb-0">
     <div class="page-wrapper d-flex flex-wrap flex-xl-nowrap">
 
@@ -23,14 +24,7 @@
 			<img id="showContainer" style="display:none; width: 100%; height: 600px; border: solid 1px #cccccc; border-radius: 4px;">
 
 
-			<div class="page-description text-center font-size-md py-3 lh-15 mb-9">
-				<span class="font-weight-semibold text-dark">Returning User? Please </span>
-				<a class="text-link font-weight-semibold" href="#login-popup" data-gtf-mfp="true"
-					data-mfp-options='{"type":"inline"}'>Sign In</a> and if you
-				are a <span
-					class="font-weight-semibold text-dark">New User, Continue Below</span> and register along with
-				this submission.
-			</div>
+			<br>
 			<!-- #submit-listing START -->
 			<div id="submit-listing" class="section-submit-listing pb-2">
 				<!-- <form> -->
@@ -38,7 +32,7 @@
 						<div class="row lh-18">
 							<div class="col-md-6 ">
 								<!-- My first form step -->
-								<form action="createBusiness" id="create-business-form" method="POST" enctype="multipart/form-data">
+								<form action="{% url 'user_panel:createBusiness' %}" id="create-business-form" method="POST" enctype="multipart/form-data">
 									{% csrf_token %}
 					
 									<div>
@@ -385,8 +379,8 @@
 										<div class="form-group mb-4">
 											<label class="text-dark font-weight-semibold font-size-md mb-2 lh-15" for="description">Description
 											</label>
-											<textarea id="description" data-tinymce="true"
-														placeholder="Detail description about your listing"></textarea>
+											<!-- <textarea id="description" data-tinymce="true"
+														placeholder="Detail description about your listing"></textarea> -->
 										</div>
 										<div class="form-group mb-4">
 											<label class="text-dark font-weight-semibold font-size-md mb-2 lh-15">Social</label>

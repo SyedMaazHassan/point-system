@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="f4f08c5f-5644-400a-9ce7-b3cda8c73dd6" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/admin_panel/supporting_func.py" beforeDir="false" afterPath="$PROJECT_DIR$/admin_panel/supporting_func.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin_panel/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/admin_panel/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin_panel/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/admin_panel/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/application/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/application/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/custom.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/custom.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin_panel/buyer.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin_panel/buyer.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin_panel/inc/profile-side-panel.inc.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin_panel/inc/profile-side-panel.inc.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin_panel/panel-dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin_panel/panel-dashboard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/admin_panel/single_owner.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/admin_panel/single_owner.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/buyer/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/buyer/dashboard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/inc/header.inc.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/inc/header.inc.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/my-business-list.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/my-business-list.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user_panel/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/user_panel/views.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1wEFPU5nfGGmfdl08o0NV1L0HAg" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="C:/Users/Public/Downloads" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f4f08c5f-5644-400a-9ce7-b3cda8c73dd6" name="Default Changelist" comment="" />
+      <created>1628015824165</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1628015824165</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="496" y="110" key="FileChooserDialogImpl" timestamp="1628015871621">
+      <screen x="0" y="0" width="1536" height="826" />
+    </state>
+    <state x="496" y="110" key="FileChooserDialogImpl/0.0.1536.826@0.0.1536.826" timestamp="1628015871621" />
+  </component>
+</project>

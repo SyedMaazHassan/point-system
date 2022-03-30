@@ -10,12 +10,140 @@
         <div class="page-container">
             <div class="container-fluid">
                 <div class="page-content-wrapper d-flex flex-column justify-content-center">
-                    <h2 class="mb-5 text-secondary">All buyers</h2>
+                    <div class="row">
+                        <div class="col-sm-6 mb-5 d-flex align-items-center">
+                            <div>
+                                <h2 class="text-secondary mr-3">All members</h2>
+                                <input class="form-control" id="myInput" type="text" placeholder="Search..">
+
+                            </div>
+                            <div style="display: none;" id="update-msg" class="ml-3 update-msg alert radius-100 py-1 my-0" id="" role="alert">
+                                
+                            </div>
+                           
+                            <!-- <span class="badge px-2 status status-badge text-white">Info has been updated!</span>                             -->
+                        </div>
+
+                        <div class="col-sm-6" id="whole-submit-form-container" style="display: none;">
+                            <div class="d-flex">
+                                <div class="form-group" style="width: 33%;">
+                                    <select class="custom-select" name="membership_level_dropdown_navbar" id="membership_level_dropdown_navbar">
+                                        <option value="">Membership</option>
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
+                                        <option value="25">25</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group mx-3" style="width: 33%;">
+                                    <select class="custom-select" name="block_dropdown_navbar" id="block_dropdown_navbar">
+                                        <option value="">Block / Unblock</option>
+                                        <option value="true">Block</option>
+                                        <option value="false">Unblock</option>
+                                    </select>
+                                </div>
+
+                                <div style="width: 30%;">
+                                    <button class="btn btn-block btn-primary" id="whole-submit-form">Save</button>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
 
                     <div class="row">
-                        {% for customer in all_customer %}
 
-                            <div class="col-sm-3 pb-5">
+                        <div class="p-3 mx-3 bg-white" style="width: 100%; border-radius: 10px; border: solid 1px rgb(179, 179, 179);">
+
+
+                                {% if all_customer %}
+                                    <table class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>Select</th> 
+                                            <th>ID</th>                                           
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Phone</th>
+                                            <th><span>Membership</span></th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="member-table">
+                                            {% for member in all_customer %}
+                                                <tr class="all-rows" id="row_{{ member.id }}">
+                                                    <td>
+                                                        <div class="double pl-2">
+                                                            <input type="checkbox" class="checkbox-list" data-member-id="{{ member.id }}">
+                                                        </div>
+                                                     </td>
+                                                    <!-- <td class="pl-3">{{ forloop.counter }}</td> -->
+                                                    <td>{{ member.id }}</td>
+                                                    <td>
+                                                        <div>
+                                                            <a style="text-decoration: none;" class="text-dark" href="{% url 'buyers' customer_id=member.id %}">
+                                                                {{ member.user_first_name }} {{ member.user_last_name }}
+                                                            </a>
+                                                        </div>
+                                                        <span class="badge px-2 status status-badge rejected text-white" style="{% if not member.is_block %}display:none;{% endif %}" id="is_blocked_{{ member.id }}">Blocked</span>
+                                                    </td>
+                                                    <td>{{ member.user_email }}</td>
+                                                    <td>{{ member.user_telephone }}</td>
+                                                    <td style="display: none;" class="individual-options-2">
+                                                        {{ member.membership_level }}
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <select class="custom-select individual-options" id="individualDropdown-{{ member.id }}">
+                                                                <option value="5" {% if member.membership_level == 5 %}selected{% endif %}>5</option>
+                                                                <option value="10" {% if member.membership_level == 10 %}selected{% endif %}>10</option>
+                                                                <option value="15" {% if member.membership_level == 15 %}selected{% endif %}>15</option>
+                                                                <option value="20" {% if member.membership_level == 20 %}selected{% endif %}>20</option>
+                                                                <option value="25" {% if member.membership_level == 25 %}selected{% endif %}>25</option>
+                                                            </select>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <div class="individual-options">
+                                                            
+                                                            <button type="button" style="display:{% if not member.is_block %} none;{% endif %}" class="btn bts-success unb btn-block" id="false-{{ member.id }}">Unblock</button>                                                        
+                                                            <button type="button" style="display:{% if member.is_block %} none;{% endif %}" class="btn btn-primary unb btn-block my-0" id="true-{{ member.id }}">Block</button>
+
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% endif %}
+
+                                {% if message %}
+                                    <div class="text-center mt-5">
+                                        <div class="alert alert-primary" role="alert">
+                                            <h3 class="my-0">{{ message }}</h3>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                              
+                           
+
+                        </div>
+
+                       
+                        
+
+                    </div>
+
+                    <div class="row">
+                        <!-- {% for customer in all_customer %} -->
+
+                            <!-- <div class="col-sm-3 pb-5">
                                 <div class="card">
                                     <a href="{% url 'buyers' customer_id=customer.id %}" style="text-decoration: none;">
 
@@ -31,14 +159,14 @@
 
                                     </a>
                                 </div>
-                            </div>
+                            </div> -->
 
-                        {% endfor %}
+                        <!-- {% endfor %} -->
                     </div>
 
                     <br>
 
-                    
+<!--                     
                     <div class="d-flex two-column mb-13 mx-n3">
                         <div class="page-left mb-6 px-3">
                        
@@ -295,7 +423,7 @@
                             </div>
 
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="copy-right mt-auto">
                         &copy; 2020 Thedir. All Rights Reserved.
@@ -308,9 +436,137 @@
 </div>
 
 <script>
+    function isNumeric(value) {
+        return /^-?\d+$/.test(value);
+    }
+
+    $(document).ready(function(){
+        $("#myInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+
+            if((value.length < 6) && isNumeric(value)){
+                $(".all-rows").hide();
+                $(`#row_${value}`).show();
+                return;
+            }
+            // console.log(isNumeric(value));
+
+            $("#member-table tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+
+
     setTimeout(() => {
         $("#dashboard-link").removeClass("active");
     }, 100);
+
+    function get_member_id(list) {
+        let empty_list = [];
+        for (let i = 0; i < list.length; i++) {
+            const element = list[i];
+            empty_list.push(parseInt($(element).attr("data-member-id")));
+        }
+        return empty_list;
+    }
+
+    $(".checkbox-list").on("change", function () {
+        if ($(".checkbox-list:checked").length > 0) {
+            $("#whole-submit-form-container").show();
+            $(".individual-options").hide();
+            $(".individual-options-2").show();
+        }else{
+            $("#whole-submit-form-container").hide();    
+            $(".individual-options").show();
+            $(".individual-options-2").hide();
+        }
+    });
+
+    function change_info(id_list, membership_level=null, block_status=null) {
+        if (!(membership_level) && !(block_status)) {
+            return;
+        }
+
+        let request = {
+            'id_list': JSON.stringify(id_list),
+            'membership_level': membership_level,
+            'block_status': block_status
+        }
+
+        let result;
+
+        $.ajax({
+            url: "{% url 'change-member-info' %}",
+            type: "GET",
+            data: request,
+            async: false,
+            success: (response)=>{
+                if (response.to_show) {
+                    alert(response.message);
+                    location.reload();
+                }else{
+                    $("#update-msg").text(response.message);
+                    if (response.status) {
+                        $("#update-msg").addClass("alert-success");
+                        $("#update-msg").removeClass("alert-danger");
+                    }else{
+                        $("#update-msg").removeClass("alert-success");
+                        $("#update-msg").addClass("alert-danger");
+                    }
+                    $("#update-msg").show();
+                    setTimeout(() => {
+                        $("#update-msg").hide();                        
+                    }, 2000);               
+                }
+                result = response.status;
+            }
+        });
+
+        return result;
+    }
+
+    $("select.individual-options").on("change", function () {
+        let value = this.value;
+        let id = parseInt(this.id.split("-")[1]);
+        change_info([id], value);
+    })
+
+    $(".unb").on("click", function () {
+        let con = this.id.split("-");
+        let id = parseInt(con[1]);
+        let status = con[0];
+        let my_res = change_info([id], null, status);
+        
+        if (my_res) {
+            $(`#${status}-${id}`).hide();
+            if (status == 'true') {
+                $(`#is_blocked_${id}`).show();
+                $(`#false-${id}`).show();
+            }else{
+                $(`#is_blocked_${id}`).hide();
+                $(`#true-${id}`).show();
+            }
+        }
+        
+        
+    });
+
+    $("#whole-submit-form").on("click", function () {
+        let membership_level = $("#membership_level_dropdown_navbar").val();
+        let status = $("#block_dropdown_navbar").val();
+
+        if (!(membership_level) && !(status)) {
+            alert("Kindly change at least one field of the form!");
+            return;
+        }
+        // Get selected members
+        let selected_members = get_member_id($(".checkbox-list:checked"));
+
+        change_info(selected_members, membership_level, status);
+        return false;
+    });
+
 </script>
 
 {% endblock content %}

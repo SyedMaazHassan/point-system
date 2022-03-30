@@ -145,7 +145,7 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <!-- <a class="btn btn-primary btn-icon-right text-white" href="{% url 'addListing' %}">
+                                <!-- <a class="btn btn-primary btn-icon-right text-white" href="{% url 'user_panel:addListing' %}">
                                     Add Transaction <i class="far fa-angle-right"></i>
                                 </a> -->
                             </div>
@@ -251,7 +251,7 @@
     $("#business-dropdown").on("change", function () {
         let selected_business = $(this).val();
         if (selected_business) {
-            let new_location = "{% url 'purchase-history' %}" + `?selected_business=${selected_business}`;
+            let new_location = "{% url 'user_panel:purchase-history' %}" + `?selected_business=${selected_business}`;
             location.href = new_location; 
         }
     });

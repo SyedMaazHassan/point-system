@@ -21771,7 +21771,6 @@ iframe {
 }
 
 .home-main-intro {
-  background-image: url("images/other/banner.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -21829,7 +21828,6 @@ iframe {
 }
 
 .home-main-testimonial {
-  background-image: url("./images/other/main-background-testimonion.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

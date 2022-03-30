@@ -9,6 +9,10 @@ import json
 
 # main page function
 
+def home(request):
+    return render(request, "home.html")
+
+
 def index(request):
     if not request.user.is_authenticated:
         return redirect("login")

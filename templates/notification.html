@@ -20,10 +20,48 @@
                     <div class="row">
 
                         <div class="p-3 mx-3 bg-white" style="width: 100%; border-radius: 10px; border: solid 1px rgb(179, 179, 179);">
+                            {% if current_user_as_receiver %}
 
+
+
+                            {% endif %}
 
                             
-                            {% if all_notifications %}
+                            {% if all_notifications or current_user_as_receiver %}
+
+                                {% for my_object in current_user_as_receiver %}
+                                    {% for notification in my_object.notification_set.all %}
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="wit-comment-viewer {% if my_object.is_read %}read{% else %}unread{% endif %}-notification">
+                                                    <div class="row">
+                                                        <div class="col-sm-7 d-flex align-items-center">
+                                                            <!-- <img src="{{ notification }}" alt=""> -->
+                                                            {{ notification.get_icon | safe }}
+                                                            <h5 class="title-card my-0">
+                                                                {{ notification.title }}
+                                                            </h5>
+                                                            {% if not my_object.is_read %}
+                                                                <span class="bg-primary radius-100 text-white  mx-2" style="padding: 0px 8px; font-size: 12px;">New</span>
+                                                            {% endif %}
+                                                        </div>
+                    
+                                                        <div class="col-sm-5 d-flex justify-content-end">
+                                                            <div class="color-primary text-center px-3" style="width: fit-content; border-radius:100px; background-color: rgb(150, 150, 150); color: white; border: solid 1px grey;">
+                                                                {{ notification.timestamp }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                    
+                                                    <div class="mt-2">
+                                                        {{ notification.content | safe }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    {% endfor %}
+                                {% endfor %}
 
                                 {% for notification in all_notifications %}
 

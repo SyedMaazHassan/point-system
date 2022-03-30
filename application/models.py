@@ -51,10 +51,15 @@ class Business(models.Model):
     categories = models.TextField()
     description = models.TextField()
     features = models.TextField()
+    organization_no = models.CharField(default="1541-4541", max_length=15)
     written_address = models.TextField()
     phone_number = models.CharField(max_length=20)
     email_address = models.CharField(max_length=20)
     website_link = models.URLField(max_length=200)
+    status = models.IntegerField(default=1)
+    # 0 = invisible
+    # 1 = pending
+    # 2 = active
 
     def bubbleSort(self, arr):
         n = len(arr)
@@ -168,6 +173,10 @@ class Business_Feature(models.Model):
     name = models.CharField(max_length=255)
 
 
+# class (models.Model):
+#     business_id = models.IntegerField()
+
+
 class Customer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     user_first_name = models.CharField(max_length=50)
@@ -179,6 +188,7 @@ class Customer(models.Model):
     user_city = models.CharField(max_length=50)
     membership_level = models.IntegerField(default=5)
     registered_time = models.DateTimeField(default=datetime.now())
+    is_block = models.BooleanField(default=0)
 
     def business_transaction_details(self, business):
         TOTAL_POINTS_WON = 0
@@ -264,6 +274,11 @@ class Points_owe(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
 
+class General_Receiver(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_read = models.BooleanField(default=False)
+
+
 class Notification(models.Model):
     title = models.CharField(max_length=100)
     TYPE = models.IntegerField(default=1)
@@ -276,6 +291,7 @@ class Notification(models.Model):
         Customer, on_delete=models.CASCADE, null=True)
     owner_receiver = models.ForeignKey(
         Business_Owner, on_delete=models.CASCADE, null=True)
+    general_receivers = models.ManyToManyField(General_Receiver, null=True)
     is_read = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -293,7 +309,8 @@ class Notification(models.Model):
     def get_icon(self):
         dictionary = {
             1: '''<img src="static/images/won.png" class="notification-icon" alt="">''',
-            2: '''<img src="static/images/cong.png" class="notification-icon" alt="">'''
+            2: '''<img src="static/images/cong.png" class="notification-icon" alt="">''',
+            3: '''<span class="material-icons mr-2">notifications</span>'''
         }
         return dictionary[self.TYPE]
 

@@ -12,40 +12,193 @@
                 <div class="page-content-wrapper d-flex flex-column justify-content-center">
                     <h2 class="mb-5 text-secondary">Dashboard</h2>
                     
-                    <div class="features card-deck">
-             
-                        <div class="card rounded-0 border-0 bg-transparent mb-6">
-                            <a href="{% url 'owners' %}" style="text-decoration: none;">
-                                <div class="card-body d-flex align-items-center py-6 px-8 bg-white">
-                                    <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 text-primary lh-1">
-                                        <i class="material-icons mt-1" style="font-size: 45px;">people</i>
-                                    </span>
-                                    <span class="font-size-md font-weight-semibold text-uppercase text-dark lh-13">Owners & requests</span>
-                                    
-                                    {% if all_business_requests > 0 %}
-                                    <span class="badge badge-danger r-25 mx-3" title="New business requests">{{all_business_requests}}</span>
-                                    {% endif %}
-                                </div>
-                            </a>
-                        </div>
+                    <div class="border mb-5 p-4 px-5 bg-white">
+                        <div class="d-flex align-items-center collapse-button" data-target="#options-section">
+                            <span id="options-section-icon" class="material-icons text-dark" style="font-size: 35px;">
+                                keyboard_arrow_down
+                            </span>
 
-
-                        <div class="card rounded-0 border-0 bg-transparent mb-6">
-                            <a href="{% url 'buyers' %}" style="text-decoration: none;">
-                                <div class="card-body d-flex align-items-center py-6 px-8 bg-white">
-                                    <span class="font-size-h1 font-weight-semibold d-inline-block mr-4 text-primary lh-1">
-                                        <i class="material-icons mt-1" style="font-size: 45px;">people</i>
-                                    </span>
-                                    <span class="font-size-md font-weight-semibold text-uppercase text-dark lh-13">All<br> Buyers</span>
-                                    
-                                    {% if all_business_requests > 0 %}
-                                    <span class="badge badge-danger r-25 mx-3" title="New business requests">{{all_business_requests}}</span>
-                                    {% endif %}
-                                </div>
-                            </a>
+                            <h4 class="my-0 ml-2">Options</h4>
                         </div>
-                    
+                        
+                
+                        <div class="facts-box mt-3 mb-2 row show-section" id="options-section">
+                            <div class="col-lg-6 mb-6 mb-xl-0">
+                                <div class="card rounded-0 border-0 p-0 general-card">
+                                    <a href="{% url 'owners' %}" style="text-decoration: none;">
+                                        <div class="card-body d-flex align-items-center py-6 px-8">
+                                            <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 text-primary lh-1">
+                                                <i class="material-icons mt-1" style="font-size: 45px;">people</i>
+                                            </span>
+                                            <span class="font-size-md font-weight-semibold text-uppercase text-dark lh-13">Owners & requests</span>
+                                            
+                                            {% if all_business_requests > 0 %}
+                                            <span class="badge badge-danger r-25 mx-3" title="New business requests">{{all_business_requests}}</span>
+                                            {% endif %}
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-6 mb-xl-0">
+                                <div class="card rounded-0 border-0 p-0 general-card">
+                                    <a href="{% url 'buyers' %}" style="text-decoration: none;">
+                                        <div class="card-body d-flex align-items-center py-6 px-8">
+                                            <span class="font-size-h1 font-weight-semibold d-inline-block mr-4 text-primary lh-1">
+                                                <i class="material-icons mt-1" style="font-size: 45px;">people</i>
+                                            </span>
+                                            <span class="font-size-md font-weight-semibold text-uppercase text-dark lh-13">All<br> Buyers</span>
+                                            
+                                            {% if all_business_requests > 0 %}
+                                            <span class="badge badge-danger r-25 mx-3" title="New business requests">{{all_business_requests}}</span>
+                                            {% endif %}
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                           
+                        </div>
+                        
                     </div>
+
+                    <div class="border mb-5 p-4 px-5 bg-white">
+                        <div class="d-flex align-items-center collapse-button" data-target="#view-and-reviews-section">
+                            <span id="view-and-reviews-section-icon" class="material-icons text-dark" style="font-size: 35px;">
+                                keyboard_arrow_down
+                            </span>
+
+                            <h4 class="my-0 ml-2">Views & reviews</h4>
+                        </div>
+                        
+                
+                        <div class="facts-box mt-3 mb-2 row show-section" id="view-and-reviews-section">
+                            <div class="col-lg-12 mb-6 mb-xl-0">
+                                <div class="facts-box row">
+                                    <div class="col-lg-4 mb-xl-0">
+                                        <div class="card view rounded-0 border-0 text-white">
+                                            <div class="card-body d-flex align-items-center p-0">
+                                                <div class="content mr-auto">
+                                                    <span class="font-size-h1 font-weight-semibold lh-1 d-block">{{ visibility.views }}</span>
+                                                    <span class="font-size-lg">Total Views</span>
+                                                </div>
+                                                <div class="fact-icon">
+                                                    <svg class="icon icon-eye">
+                                                        <use xlink:href="#icon-eye"></use>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 mb-xl-0">
+                                        <div class="card review rounded-0 border-0 text-white">
+                                            <div class="card-body d-flex align-items-center p-0">
+                                                <div class="content mr-auto">
+                                                    <span class="font-size-h1 font-weight-semibold lh-1 d-block">{{ visibility.reviews }}</span>
+                                                    <span class="font-size-lg">Total Reviews</span>
+                                                </div>
+                                                <div class="fact-icon">
+                                                    <i class="fal fa-star"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="card time-bookmark rounded-0 border-0 text-white">
+                                            <div class="card-body d-flex align-items-center p-0">
+                                                <div class="content mr-auto">
+                                                    <span class="font-size-h1 font-weight-semibold lh-1 d-block">{{ visibility.bookmarked }}</span>
+                                                    <span class="font-size-lg">Times Bookmarked</span>
+                                                </div>
+                                                <div class="fact-icon">
+                                                    <i class="fal fa-bookmark"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+
+
+                    <div class="border mb-5 p-4 px-5 bg-white">
+                        <div class="d-flex align-items-center collapse-button" data-target="#listing-info-section">
+                            <span id="listing-info-section-icon" class="material-icons text-dark" style="font-size: 35px;">
+                                keyboard_arrow_down
+                            </span>
+
+                            <h4 class="my-0 ml-2">Listing info</h4>
+                        </div>
+                        
+                
+                        <div class="facts-box mt-3 mb-2 row show-section" id="listing-info-section">
+                            <div class="col-lg-12 mb-6 mb-xl-0">
+                                <div class="features card-deck row">
+                                    <div class="col-sm-3">
+                                        <div class="card p-0 rounded-0 border-0 general-card">
+                                            <div class="card-body d-flex align-items-center py-6 px-8">
+                                                <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 text-primary lh-1">{{ listing.all }}</span>
+                                                <span class="font-size-md font-weight-semibold text-uppercase text-dark lh-13">All <br> Listings</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <div class="card p-0 rounded-0 border-0 general-card">
+                                            <div class="card-body d-flex align-items-center py-6 px-8">
+                                                <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 text-darker-light lh-1">{{ listing.pending }}</span>
+                                                <span class="font-size-md font-weight-semibold text-uppercase text-dark lh-13">Pending<br> Listings</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <div class="card p-0 rounded-0 border-0 general-card">
+                                            <div class="card-body d-flex align-items-center py-6 px-8">
+                                                <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 lh-1 published">{{ listing.active }}</span>
+                                                <span class="font-size-md font-weight-semibold text-uppercase text-dark lh-13">published<br> Listings</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                   
+                                    <div class="col-sm-3">
+                                        <div class="card p-0 rounded-0 border-0 general-card">
+                                            <div class="card-body d-flex align-items-center py-6 px-8">
+                                                <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 lh-1 experied">{{ listing.invisible }}</span>
+                                                <span class="font-size-md font-weight-semibold text-uppercase text-dark lh-13">Hidden<br> Listings</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- <div class="col-sm-4">
+                                        <div class="card p-0 rounded-0 border-0 mb-6 general-card">
+                                            <div class="card-body d-flex align-items-center p-6 px-8">
+                                                <span class="font-size-h1 font-weight-semibold d-inline-block mr-2 lh-1 active">1</span>
+                                                <span class="font-size-md font-weight-semibold text-uppercase text-dark lh-13">Active campaign <br> Listings</span>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                                                      
+                                </div>
+
+                            </div>
+
+                           
+                        </div>
+                        
+                    </div>
+
+
+                 
+
+                    
+
+
+
+                    
+                    
+                
                     <!-- <div class="d-flex two-column mb-13 mx-n3">
                         <div class="page-left mb-6 px-3">
                             <div class="alert alert-success mb-6 alert-dismissible fade show d-flex align-items-center pr-3">
@@ -325,6 +478,8 @@
     </div>
 
 </div>
+
+<script src="{% static 'js/collapse.js' %}"></script>
 
 {% endblock content %}
 

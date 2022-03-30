@@ -48,9 +48,15 @@
                                         </div>
                                     </div>
                                     <div class="card-body pb-4 border-right border-left">
-                                        <a href="{% url 'business' business_name=business.link_name %}"
-                                           class="card-title h5 text-dark d-inline-block mb-2"><span
+                                        {% if admin %}
+                                            <a href="/admin-panel/business/{{business.link_name}}"
+                                            class="card-title h5 text-dark d-inline-block mb-2"><span
+                                                    class="letter-spacing-25">{{ business.title_name }}</span></a>
+                                        {% else %}
+                                            <a href="{% url 'user_panel:business' business_name=business.link_name %}"
+                                            class="card-title h5 text-dark d-inline-block mb-2"><span
                                                 class="letter-spacing-25">{{ business.title_name }}</span></a>
+                                        {% endif %}
                                         <ul class="list-inline store-meta mb-4 font-size-sm d-flex align-items-center flex-wrap">
                                             <li class="list-inline-item"><span
                                                     class="badge badge-success mr-1 d-inline-block">5.0</span><span

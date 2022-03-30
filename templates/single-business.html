@@ -53,7 +53,7 @@
                             <div class="form-group">
                                 <label>Customer ID</label>
                                 <input type="number" v-model="customer_id" @keyup="get_customer_name()" class="form-control" required>
-                                <p class="text-danger" v-if="customer_name_error">Invalid ID</p>
+                                <small class="text-danger" v-if="customer_name_error">${customer_name_error}</small>
                             </div>
                         </div>
 
@@ -313,18 +313,18 @@
                 <div class="page-content col-xl-8 mb-8 mb-xl-0 pt-1">
                     <div class="explore-details-container">
                         <div class="mb-9">
-                            <h5 class="font-size-lg text-uppercase pb-2 mb-6">
+                            <h3 class="text-uppercase pb-0 mb-0">
                                 description
-                            </h5>
+                            </h3>
                             <!-- <h6 class="font-size-md mb-4">Introduce</h6> -->
                             <div class="mb-7">
                                 <p class="mb-6">
-                                    {{ business.description }}
+                                    {{ business.description | safe }}
                                 </p>
                             </div>
-                            <h6 class="font-size-md mb-4">
+                            <h4 class="mb-4">
                                 Features
-                            </h6>
+                            </h4>
                             <div>
                                 {% for feature in business.get_features %}
                                     <span class="mylabel mr-2 to-select-label category">{{ feature.name }}</span>    
@@ -1413,7 +1413,7 @@ var my_vue_app = new Vue({
         available_points: 0,
     
         custom_error: null,
-        customer_name_error: false,
+        customer_name_error: "",
         my_error: false,
         success: false,
 
@@ -1433,7 +1433,7 @@ var my_vue_app = new Vue({
                 let my_customer_id = this.customer_id;
                 let my_business_id = this.business_id;
                 $.ajax({
-                    url: "{% url 'get_user' %}",
+                    url: "{% url 'user_panel:get_user' %}",
                     type: "GET",
                     data: {
                         customer_id: my_customer_id,
@@ -1445,10 +1445,10 @@ var my_vue_app = new Vue({
                             this.customer_name = response.result.name;
                             this.available_points = response.result.account_info.total_balance;
                             this.membership_level = response.result.account_info.membership_level;
-                            this.customer_name_error = false;
+                            this.customer_name_error = "";
                         }else{
                             this.customer_name = null;
-                            this.customer_name_error = true;
+                            this.customer_name_error = response.message;
                         }
                     }
                 })
@@ -1525,7 +1525,7 @@ var my_vue_app = new Vue({
             this.available_points = 0;
         
             this.custom_error = null;
-            this.customer_name_error = false;
+            this.customer_name_error = "";
             this.my_error = false;
             this.success = false;
 
@@ -1545,7 +1545,7 @@ var my_vue_app = new Vue({
             if (this.business_id && this.receipt && this.price && this.customer_name && this.customer_id && this.payment.via_money > 0 && this.payment.via_points != null && this.check_calculation()) {
               
                 $.ajax({
-                    url: "{% url 'add_new_transaction' %}",
+                    url: "{% url 'user_panel:add_new_transaction' %}",
                     type: "GET",
                     data: {
                         business_id: this.business_id,

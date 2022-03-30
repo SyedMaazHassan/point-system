@@ -19,11 +19,24 @@ def notifications(request):
         all_notification = list(Notification.objects.filter(
             owner_receiver=status_object).order_by("-id"))
 
+    all_my_notifications = []
+    current_user_as_receiver = list(General_Receiver.objects.filter(
+        user=request.user).order_by("-id"))
+
+    # for i in current_user_as_receiver:
+    #     all_my_notifications += list(i.notification_set.all())
+    # all_my_notifications.reverse()
+
+    # all_notification = all_my_notifications + all_notification
+
     context = {
+        'current_user_as_receiver': current_user_as_receiver,
         'all_notifications': all_notification,
         'user_status': get_user_status_only(request.user),
         'business_owner_details': status_object
     }
+
+    General_Receiver.objects.filter(user=request.user).update(is_read=True)
 
     if status_only == "user":
         Notification.objects.filter(
@@ -32,6 +45,9 @@ def notifications(request):
         Notification.objects.filter(
             owner_receiver=status_object).update(is_read=True)
 
+    print("=============")
+    print(all_my_notifications)
+    print("=============")
     return render(request, "notification.html", context)
 
 
@@ -90,7 +106,11 @@ def index(request):
 def particular_business(request, business_name):
     focused_business = business_name.split("-")[-1]
     try:
+        print("===========")
+        print(focused_business)
+        print("===========")
         focused_business_id = int(focused_business)
+
         if Business.objects.filter(id=focused_business_id).exists():
             focused_business_object = Business.objects.get(
                 id=focused_business_id)
@@ -100,10 +120,16 @@ def particular_business(request, business_name):
                 'user_status': get_user_status_only(request.user),
                 "timestamp": datetime.now()
             }
+
+            new_view = BusinessView(business_id=focused_business_id)
+            new_view.save()
+
             return render(request, "single-business.html", context)
         else:
             return redirect("index")
-    except:
+    except Exception as e:
+        messages.error(request, str(e))
+        print(e)
         return redirect("index")
 
 
@@ -156,7 +182,7 @@ def create_business(request):
             if len(str(j)) == 0:
                 isAnyEmpty = True
 
-        return redirect("index")
+        # return redirect("index")
 
         if isAnyEmpty:
             messages.error(
@@ -234,7 +260,10 @@ def purchase_history(request):
 
 
 def get_user(request):
-    output = {'result': False}
+    output = {
+        'result': False,
+        'message': ""
+    }
     if request.method == "GET" and request.is_ajax():
         customer_id = request.GET['customer_id']
         business_id = request.GET['business_id']
@@ -245,12 +274,18 @@ def get_user(request):
             if customer.exists() and business.exists():
                 customer = customer[0]
                 business = business[0]
-                account_info = account_details_wrt_business(customer, business)
 
-                output['result'] = {
-                    'name': f'{customer.user_first_name} {customer.user_last_name}',
-                    'account_info': account_info
-                }
+                if customer.is_block:
+                    output['message'] = "Customer is blocked"
+                else:
+                    account_info = account_details_wrt_business(
+                        customer, business)
+                    output['result'] = {
+                        'name': f'{customer.user_first_name} {customer.user_last_name}',
+                        'account_info': account_info
+                    }
+            else:
+                output['message'] = "Invalid ID"
         except:
             print(output)
 

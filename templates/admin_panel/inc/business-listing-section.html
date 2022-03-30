@@ -1,0 +1,192 @@
+{% load static %}
+<div class="row">
+    <div class="col-sm-12" id="left-panel">
+        <div class="tab-pane fade show mb-5" id="all" role="tabpanel" aria-labelledby="all-tab">
+            <div class="store-listing-style-04 bg-white shadow-boxing">
+                {% for business in all_business %}
+                    <div class="store-listing-item px-4 business_containers" id="business_container_{{business.id}}">
+                        <div class="d-flex align-items-center flex-wrap flex-lg-nowrap border-bottom py-4 py-lg-0">
+                            <div class="store media align-items-stretch py-4">
+                                <a href="listing-details-full-image.html" class="store-image">
+                                    <img src="media/{{business.banner_image}}" style="height: 130px;" alt="Favourite 1">
+                                </a>
+                                <div class="media-body px-0 pt-4 pt-md-0">
+                                    {% if user.is_superuser %}
+                                        <a href="/admin-panel/business/{{business.link_name}}" class="font-size-lg font-weight-semibold text-dark d-inline-block mb-2 lh-1"><span class="letter-spacing-25">
+                                    {% else %}
+                                        <a href="{% url 'business' business_name=business.link_name %}" class="font-size-lg font-weight-semibold text-dark d-inline-block mb-2 lh-1"><span class="letter-spacing-25">
+                                    {% endif %}
+                                        {{ business.title_name }} &nbsp; - &nbsp; {{ business.organization_no }}
+                                    </span>
+                                    
+                                    </a>
+                                
+                                    <div class="border-top pt-2 d-flex mt-2">
+                                    
+                                    </div>
+                                    
+                                    <div class="ml-0 ml-sm-auto my-1">
+                                        <i class="fas fa-map-marker-alt mr-2"></i>
+                                        {{ business.written_address }}
+                                    </div>
+
+                                    <div class="ml-0 ml-sm-auto my-1">
+                                        <i class="fas fa-envelope mr-2"></i>
+                                        {{ business.email_address }}
+                                    </div>
+
+                                    <div class="ml-0 ml-sm-auto my-1">
+                                        <i class="fas fa-phone mr-2"></i>
+                                        {{ business.phone_number }}
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="action ml-0 ml-lg-auto mt-3 mt-lg-0 align-items-center flex-wrap flex-sm-nowrap w-100 w-lg-auto">
+                                
+                                <!-- <a href="page-submit-listing.html" class="btn btn-light btn-icon-left mb-2 mb-sm-0 font-size-md">
+                                    <i class="fal fa-edit"></i>
+                                    Edit
+                                </a> -->
+
+
+                                <div class="text-center">
+                                    {% if is_listing %}
+                                        <a href="{% url 'owners' owner_id=business.super_owner.id %}?select_business={{ business.id }}">
+                                            <button style="margin: auto;" class="btn btn-outline-primary btn-icon-left mb-2 mb-sm-0 px-5 font-size-md">
+                                                Get owner profile
+                                            </button>
+                                        </a>
+                                       
+                                        <p class="my-3">OR</p>
+                                    {% endif %}
+
+                                    <button onclick="get_customer_list('{{business.id}}')" style="margin: auto;" class="btn btn-secondary btn-icon-left mb-2 mb-sm-0 px-5 font-size-md">
+                                        Get Points details
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                {% if not all_business %}
+                    {% if is_listing %}
+                        <div class="card text-center">
+                            <div class="card-body p-7">
+                                <i class="material-icons bg-primary text-white p-3" style="font-size: 36px; border-radius: 100px;">search</i>
+                                <h1 class="display-4 mt-6" style="font-size: 30px;">We didn't find any results for your search.</h1>
+                            </div>
+                        </div>              
+                    {% else %}
+                        <div class="alert alert-primary text-center" style="font-size: 25px;" role="alert">
+                            This owner has not business yet!
+                        </div>
+                    {% endif %}
+                {% endif %}
+            
+            </div>
+        
+        </div>
+    </div>
+
+    <div class="col-sm-4" id="right-panel" style="display: none;">
+        <div class="bg-white shadow-boxing">
+            <!-- <div class="text-center" style="background-image: url(media/{{all_business.1.banner_image}});">
+                                        
+            </div> -->
+            <div class="d-flex align-items-center">
+                <h6 id="title_holder" style="width: 90%;" class="bg-white p-3 my-0"></h6>
+                <div style="width: 10%;">
+                    <i class="material-icons my-0 mk-pointer" onclick="close_right_panel()">close</i>
+                </div>
+            </div>
+            <div>
+                <img id="image_holder" style="height: 150px; width: 100%;" src="" alt="">
+            </div>
+
+            <div class="p-3 text-center">
+                required points   
+                <h2 class="mb-4" id="total_holder"></h2>
+                <!-- <h6 class="my-3">{{all_business.0.title_name}}</h6> -->
+                <!-- <h6 class="text-left text-dark">Details</h6> -->
+                <table class="table table-hover border text-left">
+                    <thead class="thead-light">
+                        <th class="px-3">Customer name</th>
+                        <th>Points</th>
+                    </thead>
+                    <tbody id="table_body">
+                        
+                  
+                    
+                    </tbody>
+                </table>
+
+           
+                
+
+            </div>
+
+            <div class="p-3 mt-2" id="send-section"  style="display: none; border-left: solid 4px #b8b8b8; background-color: rgb(248, 248, 248);">
+                <div class="row px-3">
+                    <div class="col-sm-12 py-2 px-1">
+                        <h6 class="text-left">Give points to these buyers</h6>
+                    </div>
+
+                    <div class="col-sm-7 px-1">
+                        <input class="form-control" placeholder="Enter points" id="points_to_be_given" type="number" step="0.01" required>
+                    </div>
+
+                    <div class="col-sm-5 px-1">
+                        <button onclick="send_points()" style="margin: auto;" class="btn btn-primary btn-block btn-icon-left mb-sm-0 px-5 font-size-md">
+                            <!-- <i class="fal fa-send"></i> -->
+                            <i class="fal fa-paper-plane"></i>
+                            Send
+                        </button>
+                    </div>  
+                    <div class="col-sm-12 px-1 py-1">
+                        <small id="at-most-fb">You can give at most <b><span class="admin_total_balance">{{ admin_account_info.total_balance }}</span></b> points</small>
+                    </div>
+
+                    <div class="col-sm-12 py-1 px-1">
+                        <div  id="loading-spinner" style="display: none;" class="text-center py-3">
+                            <div class="text-center spinner-border text-primary" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>    
+                        </div>
+
+                        <div id="error-msg" style="display: none;" class="alert alert-primary alert-dismissible mb-0 fade show" role="alert">
+                            Something went wrong!
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                        
+
+                        <div id="error-2-msg" style="display: none;" class="alert alert-danger mb-0 alert-dismissible fade show" role="alert">
+                            Value must be less than or equal to <b><span id="point-needed"></span></b>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+
+                    </div>
+                </div>
+
+            </div>
+
+            
+            <div style="display: none;" id="success-msg" class="alert alert-success mb-0 alert-dismissible fade show" role="alert">
+                Points sent successfully!
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+        </div>
+
+    </div>
+</div>
