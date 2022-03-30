@@ -173,8 +173,8 @@ class Business_Feature(models.Model):
     name = models.CharField(max_length=255)
 
 
-# class (models.Model):
-#     business_id = models.IntegerField()
+class BusinessView(models.Model):
+    business_id = models.IntegerField()
 
 
 class Customer(models.Model):
